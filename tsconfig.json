@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "ESNext",
+    "module": "NodeNext",
     "rootDir": "./src",
-    "moduleResolution": "Classic",
+    "moduleResolution": "NodeNext",
     "baseUrl": "./",
     "outDir": "./bin",
     "esModuleInterop": true,
@@ -14,7 +14,6 @@
     "strictFunctionTypes": true,
     "strictBindCallApply": true,
     "strictPropertyInitialization": true,
-    "strictBuiltinIteratorReturn": true,
     "noImplicitThis": true,
     "useUnknownInCatchVariables": true,
     "alwaysStrict": true,
