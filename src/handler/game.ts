@@ -1,5 +1,5 @@
 import { randomBytes } from "crypto";
-import Cache from "./database.js";
+import Cache from "./cache.js";
 
 function create() {
   const bytes = randomBytes(6);
