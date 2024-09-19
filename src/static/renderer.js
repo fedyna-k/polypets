@@ -8,7 +8,7 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 camera.position.z = 5;
 
 // WebGL Renderer
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -18,19 +18,39 @@ const geometry = new THREE.BoxGeometry();
 // Create a texture loader
 const loader = new THREE.TextureLoader();
 
-// Define materials for each face
+const texturePath = '/static/resources/textures/cobblestone.png';
+const material = createMaterial(texturePath);
+
+// Define textures for each face of the cube
 const materials = [
-    createMaterial('/static/resources/textures/cobblestone.png'), // Face 1
-    createMaterial('/static/resources/textures/cobblestone.png'), // Face 2
-    createMaterial('/static/resources/textures/cobblestone.png'), // Face 3
-    createMaterial('/static/resources/textures/cobblestone.png'), // Face 5
-    createMaterial('/static/resources/textures/cobblestone.png'), // Face 4
-    createMaterial('/static/resources/textures/cobblestone.png')  // Face 6
+    material,
+    material,
+    material,
+    material,
+    material,
+    material
 ];
 
-// Create the cube with different materials for each face
+// Function to create a material with nearest filtering
+function createMaterial(texturePath) {
+    const texture = loader.load(texturePath);
+    texture.magFilter = THREE.NearestFilter;
+    texture.minFilter = THREE.NearestFilter;
+    return new THREE.MeshBasicMaterial({ map: texture });
+}
+
+// Create the cube with textures for each face
 const cube = new THREE.Mesh(geometry, materials);
 scene.add(cube);
+
+// Add a background plane
+const backgroundTexture = loader.load('https://images.photowall.com/products/42556/summer-landscape-with-river.jpg?h=699&q=85'); // Chemin de l'image de fond
+const backgroundGeometry = new THREE.PlaneGeometry(16, 12); // Taille du plan
+const backgroundMaterial = new THREE.MeshBasicMaterial({ map: backgroundTexture, side: THREE.DoubleSide });
+const background = new THREE.Mesh(backgroundGeometry, backgroundMaterial);
+background.position.z = -5; // Positionne le plan derrière le cube
+scene.add(background);
+
 // Cube animation
 const animate = () => {
     requestAnimationFrame(animate);
@@ -48,14 +68,6 @@ window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 });
-
-function createMaterial(texturePath) {
-    const texture = loader.load(texturePath);
-    texture.magFilter = THREE.NearestFilter; // Mag filter
-    texture.minFilter = THREE.NearestFilter; // Min filter
-    return new THREE.MeshBasicMaterial({ map: texture });
-}
-
 
 // Start animation
 animate();
