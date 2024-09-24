@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.150.0/build/three.module.js';
+import * as THREE from "three";
 
 // Scene Setup
 const scene = new THREE.Scene();
@@ -32,7 +32,7 @@ const materials = [
 ];
 
 // Function to create a material with nearest filtering
-function createMaterial(texturePath) {
+function createMaterial(texturePath: any) {
     const texture = loader.load(texturePath);
     texture.magFilter = THREE.NearestFilter;
     texture.minFilter = THREE.NearestFilter;

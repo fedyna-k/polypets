@@ -4,7 +4,7 @@
   "description": "Coucou les polypets",
   "main": "bin/app.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp -r ./src/public ./bin && find bin | grep .ts | xargs -I{} rm {}",
     "start": "node ."
   },
   "keywords": [],
