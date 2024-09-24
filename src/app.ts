@@ -1,6 +1,6 @@
-import express from 'express';
-import GameRouter from './router/game-router.js'
-import Cache from './handler/cache.js';
+import express from "express";
+import GameRouter from "./router/game-router.js";
+import Cache from "./handler/cache.js";
 import path from "path";
 
 const DEBUG = true;
@@ -15,16 +15,21 @@ if (DEBUG) {
   });
 }
 
-if (DEBUG) {
-  console.log('Path to public folder :', path.join((import.meta.dirname ?? __dirname), '..', 'public'));
-}
+app.set("view engine", "ejs");
+app.set("views", path.join(import.meta.dirname ?? __dirname, "public/views"));
+app.use("/static", express.static(path.join(import.meta.dirname ?? __dirname, "public/static")));
 
-app.use('/', express.static(path.join((import.meta.dirname ?? __dirname), '..', 'public')));
-app.use('/static', express.static(path.join((import.meta.dirname ?? __dirname), '..', 'src', 'static')));
+app.get("/", (_, res) => {
+  res.render("index");
+});
 
-app.use('/game', GameRouter);
+app.get("/three", (_, res) => {
+  res.render("three");
+});
 
-Cache.createCategory('game');
+app.use("/game", GameRouter);
+
+Cache.createCategory("game");
 
 app.listen(port, () => {
   console.log(`Application listening to port ${port}. Address : http://localhost:${port}/views/three.html`);
