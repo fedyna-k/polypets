@@ -44,7 +44,7 @@ export default class Cache {
    * Creates a new category in cache.
    * @param category The category name.
    */
-  static createCategory(category: string) {
+  static createCategory(category: string): void {
     if ($instance[category] != undefined) {
       throw new Error(`Category "${category}" already exists in cache.`);
     }
@@ -53,10 +53,23 @@ export default class Cache {
   }
 
   /**
+   * Gets the full category without filters.
+   * @param category The category name.
+   * @returns The full category.
+   */
+  static getCategory(category: string): KeyValue[] {
+    if ($instance[category] == undefined) {
+      throw new Error(`Category "${category}" already exists in cache.`);
+    }
+
+    return $instance[category];
+  }
+
+  /**
    * Adds a new value to the cache.
    * @param params The category and value object.
    */
-  static add(params: CacheCreateParameters) {
+  static add(params: CacheCreateParameters): void {
     if ($instance[params.category] == undefined) {
       throw new Error(`Category "${params.category}" doesn't exist in cache.`);
     }
@@ -67,8 +80,9 @@ export default class Cache {
   /**
    * Gets all matching values from the cache.
    * @param params The category and criteria object.
+   * @returns The KeyValue objects that match the criteria.
    */
-  static find(params: CacheReadParameters) {
+  static find(params: CacheReadParameters): KeyValue[] {
     if ($instance[params.category] == undefined) {
       throw new Error(`Category "${params.category}" doesn't exist in cache.`);
     }
@@ -81,7 +95,7 @@ export default class Cache {
    * Edits a value from the cache.
    * @param params The category, old and new object.
    */
-  static edit(params: CacheUpdateParameters) {
+  static edit(params: CacheUpdateParameters): void {
     if ($instance[params.category] == undefined) {
       throw new Error(`Category "${params.category}" doesn't exist in cache.`);
     }
@@ -94,7 +108,7 @@ export default class Cache {
    * Removes a value from the cache.
    * @param params The category and value object.
    */
-  static remove(params: CacheDeleteParameters) {
+  static remove(params: CacheDeleteParameters): void {
     if ($instance[params.category] == undefined) {
       throw new Error(`Category "${params.category}" doesn't exist in cache.`);
     }
