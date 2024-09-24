@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.150.0/build/three.module.js';
+import * as THREE from "three";
 
 // Scene Setup
 const scene = new THREE.Scene();
@@ -18,7 +18,7 @@ const geometry = new THREE.BoxGeometry();
 // Create a texture loader
 const loader = new THREE.TextureLoader();
 
-const texturePath = '/static/resources/textures/cobblestone.png';
+const texturePath = "/static/resources/textures/cobblestone.png";
 const material = createMaterial(texturePath);
 
 // Define textures for each face of the cube
@@ -32,7 +32,7 @@ const materials = [
 ];
 
 // Function to create a material with nearest filtering
-function createMaterial(texturePath) {
+function createMaterial(texturePath: string) {
     const texture = loader.load(texturePath);
     texture.magFilter = THREE.NearestFilter;
     texture.minFilter = THREE.NearestFilter;
@@ -44,7 +44,7 @@ const cube = new THREE.Mesh(geometry, materials);
 scene.add(cube);
 
 // Add a background plane
-const backgroundTexture = loader.load('https://images.photowall.com/products/42556/summer-landscape-with-river.jpg?h=699&q=85'); // Chemin de l'image de fond
+const backgroundTexture = loader.load("https://images.photowall.com/products/42556/summer-landscape-with-river.jpg?h=699&q=85"); // Chemin de l"image de fond
 const backgroundGeometry = new THREE.PlaneGeometry(16, 12); // Taille du plan
 const backgroundMaterial = new THREE.MeshBasicMaterial({ map: backgroundTexture, side: THREE.DoubleSide });
 const background = new THREE.Mesh(backgroundGeometry, backgroundMaterial);
@@ -63,7 +63,7 @@ const animate = () => {
 };
 
 // Dynamic camera resizing
-window.addEventListener('resize', () => {
+window.addEventListener("resize", () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
