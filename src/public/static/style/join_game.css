@@ -1,0 +1,67 @@
+#logo {
+    width: 15dvw;
+    display: block;
+}
+
+div {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.container{
+    position: absolute;
+    width: 100dvw;
+    height: 100dvh;
+
+    /* Center element inside */
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+
+.blur {
+    background-color: rgba(255, 255, 255, 0.5);
+    align-content: center;
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    padding: 7.5dvh 5dvw;
+    gap: 7.5dvh;
+}
+
+.menu-button {
+    display: block;
+    color: white;
+    background-color: #00ADEF;
+    border-radius: 45px;
+    height: 8dvh;
+    width: 16dvw;
+    border-width: 0;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.menu-button:hover {
+    background-color: #007DAC;
+}
+
+form {
+    align-content: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    gap: 5dvh;
+}
+
+body {
+    background-color: black;
+    margin: 0;
+}
+
+.error_message {
+    color: red;
+}
