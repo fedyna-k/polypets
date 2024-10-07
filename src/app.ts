@@ -3,12 +3,12 @@ import GameRouter from "./router/game-router.js";
 import Cache from "./handler/cache.js";
 import path from "path";
 import logger from "./handler/logger.js";
+import { setupEnvironment } from "./handler/dotenv.js";
 
-const DEBUG = true;
+setupEnvironment();
 const app = express();
-const port = 5050;
 
-if (DEBUG) {
+if (process.env["debug"] == "true") {
   // Middleware for request debug
   app.use((req, _res, next) => {
     logger.info({
@@ -34,6 +34,8 @@ app.get("/three", (_, res) => {
 app.use("/game", GameRouter);
 
 Cache.createCategory("game");
+
+const port = Number.parseInt(process.env["port"] ?? "3000");
 
 app.listen(port, () => {
   logger.info({
