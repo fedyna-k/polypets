@@ -2,15 +2,19 @@ import express from "express";
 import GameRouter from "./router/game-router.js";
 import Cache from "./handler/cache.js";
 import path from "path";
+import logger from "./handler/logger.js";
+import { setupEnvironment } from "./handler/dotenv.js";
 
-const DEBUG = true;
+setupEnvironment();
 const app = express();
-const port = 5050;
 
-if (DEBUG) {
+if (process.env["debug"] == "true") {
   // Middleware for request debug
   app.use((req, _res, next) => {
-    console.log(`Request received for ${req.url}`);
+    logger.info({
+      message: `Request received for ${req.url}`,
+      context: "app.ts"
+    });
     next();
   });
 }
@@ -32,6 +36,11 @@ app.use("/game", GameRouter);
 
 Cache.createCategory("game");
 
+const port = Number.parseInt(process.env["port"] ?? "3000");
+
 app.listen(port, () => {
-  console.log(`Application listening to port ${port}. Address : http://localhost:${port}/three`);
+  logger.info({
+    message: `Application listening to port ${port}. Address : http://localhost:${port}/three`,
+    context: "app.ts"
+  });
 });
