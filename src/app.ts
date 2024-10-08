@@ -21,6 +21,7 @@ if (process.env["debug"] == "true") {
 
 app.set("view engine", "ejs");
 app.set("views", path.join(import.meta.dirname ?? __dirname, "public/views"));
+
 app.use("/static", express.static(path.join(import.meta.dirname ?? __dirname, "public/static")));
 
 app.get("/", (_, res) => {
@@ -39,7 +40,7 @@ const port = Number.parseInt(process.env["port"] ?? "3000");
 
 app.listen(port, () => {
   logger.info({
-    message: `Application listening to port ${port}. Address : http://localhost:${port}/views/three.html`,
+    message: `Application listening to port ${port}. Address : http://localhost:${port}/three`,
     context: "app.ts"
   });
 });
