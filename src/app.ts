@@ -17,6 +17,7 @@ if (DEBUG) {
 
 app.set("view engine", "ejs");
 app.set("views", path.join(import.meta.dirname ?? __dirname, "public/views"));
+
 app.use("/static", express.static(path.join(import.meta.dirname ?? __dirname, "public/static")));
 
 app.get("/", (_, res) => {
@@ -32,5 +33,5 @@ app.use("/game", GameRouter);
 Cache.createCategory("game");
 
 app.listen(port, () => {
-  console.log(`Application listening to port ${port}. Address : http://localhost:${port}/views/three.html`);
+  console.log(`Application listening to port ${port}. Address : http://localhost:${port}/three`);
 });
