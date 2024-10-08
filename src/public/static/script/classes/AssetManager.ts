@@ -8,7 +8,6 @@ class AssetManager {
     private soundsPath: string;
 
     constructor() {
-        // Define base paths for different asset types
         this.basePath = path.join(__dirname, '../public/static/resources/assets');
         this.modelsPath = path.join(this.basePath, 'models');
         this.texturesPath = path.join(this.basePath, 'textures');
