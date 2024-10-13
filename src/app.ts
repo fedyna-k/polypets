@@ -1,14 +1,23 @@
 import express from "express";
+import https from "https";
+import path from "path";
+import { readFileSync } from "fs";
 import GameRouter from "./router/game-router.js";
 import Cache from "./handler/cache.js";
-import path from "path";
 import logger from "./handler/logger.js";
 import { setupEnvironment } from "./handler/dotenv.js";
 
 setupEnvironment();
+
+const port = 443;
 const app = express();
 
-if (process.env["debug"] == "true") {
+const options = {
+  key: readFileSync(process.env.CA_PRIVATE_KEY),
+  cert: readFileSync(process.env.CA_CERTIFICATE)
+};
+
+if (process.env.DEBUG == "true") {
   // Middleware for request debug
   app.use((req, _res, next) => {
     logger.info({
@@ -36,11 +45,9 @@ app.use("/game", GameRouter);
 
 Cache.createCategory("game");
 
-const port = Number.parseInt(process.env["port"] ?? "3000");
-
-app.listen(port, () => {
+https.createServer(options, app).listen(port, () => {
   logger.info({
-    message: `Application listening to port ${port}. Address : http://localhost:${port}/three`,
+    message: `Application listening to port ${port}.`,
     context: "app.ts"
   });
 });
