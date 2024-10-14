@@ -9,7 +9,7 @@ export function logRequest(): RequestHandler {
   if (process.env.DEBUG == "true") {
     return (req, _res, next) => {
       logger.info({
-        message: `${req.method.toUpperCase()} request received for ${req.url}`,
+        message: `${req.method.toUpperCase()} request received for ${req.url} (from ip: ${req.ip})`,
         context: "middleware/logging.ts"
       });    
       next();
