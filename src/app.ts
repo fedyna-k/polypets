@@ -15,10 +15,12 @@ const app = express();
 if (process.argv.includes("local")) {
   process.env.CA_PRIVATE_KEY = "certs/privkey.pem";
   process.env.CA_CERTIFICATE = "certs/cert.pem";
+
+  logger.info({
+    message: "Running app with local certificates (not CA signed).",
+    context: "app.ts"
+  });
 }
-
-console.log(process.env);
-
 
 const options = {
   key: readFileSync(process.env.CA_PRIVATE_KEY),
