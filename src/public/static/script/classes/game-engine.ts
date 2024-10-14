@@ -1,6 +1,6 @@
 import {Color, Scene, TextureLoader, WebGLRenderer} from "three";
 import * as THREE from "three";
-import { OrbitCamera } from "./OrbitCamera.js";
+import { OrbitCamera } from "./orbit-camera.js";
 
 export class GameEngine {
     // WebGL renderer for rendering the scene
@@ -76,14 +76,14 @@ export class GameEngine {
         // Set the initial camera position
         this.camera.position.set(0, 0, 5);
 
-        console.log("Adding canvas to container with Id : " + sceneId)
+        console.log("Adding canvas to container with Id : " + sceneId);
 
         // Get the container element where the scene will be rendered
-        let container = document.getElementById(sceneId);
+        const container = document.getElementById(sceneId);
 
         // Append the renderer's canvas to the container
         container?.appendChild(this.renderer.domElement);
-        this.renderer.domElement.classList.add("three-canva")
+        this.renderer.domElement.classList.add("three-canva");
 
         // Setup a resize observer for handling dynamic resizing of the renderer
         const resizeRenderer = () => {
@@ -130,7 +130,7 @@ export class GameEngine {
         let isDragging = false;
 
         // Mouse move event handler for rotating the camera
-        let onMouseMove = (event: MouseEvent) => {
+        const onMouseMove = (event: MouseEvent) => {
             if (!isDragging) return;
 
             // Calculate the mouse movement (delta) from the last recorded position
@@ -145,20 +145,20 @@ export class GameEngine {
         };
 
         // Mouse down event handler to start camera movement
-        let onMouseDown = (event: MouseEvent) => {
+        const onMouseDown = (event: MouseEvent) => {
             isDragging = true;
             prevMouse = { x: event.clientX, y: event.clientY };
             console.log("Mouse button pressed");
         };
 
         // Mouse up event handler to stop camera movement
-        let onMouseUp = (_event: Event) => {
+        const onMouseUp = () => {
             isDragging = false;
             console.log("Mouse button released");
         };
 
         // Mouse wheel event handler to adjust the camera's distance from the target
-        let onMouseWheel = (event: WheelEvent) => {
+        const onMouseWheel = (event: WheelEvent) => {
             console.log("Mouse wheel scrolled:", event.deltaY);
 
             // Update the camera's radius based on the scroll wheel input
