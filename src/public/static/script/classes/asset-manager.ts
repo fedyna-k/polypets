@@ -1,4 +1,4 @@
-import * as path from 'path';
+import * as path from "path";
 
 class AssetManager {
     // Base paths for assets
@@ -8,15 +8,15 @@ class AssetManager {
     private soundsPath: string;
 
     constructor() {
-        this.basePath = path.join(__dirname, '../public/static/resources/assets');
-        this.modelsPath = path.join(this.basePath, 'models');
-        this.texturesPath = path.join(this.basePath, 'textures');
-        this.soundsPath = path.join(this.basePath, 'sounds');
+        this.basePath = path.join(__dirname, "../public/static/resources/assets");
+        this.modelsPath = path.join(this.basePath, "models");
+        this.texturesPath = path.join(this.basePath, "textures");
+        this.soundsPath = path.join(this.basePath, "sounds");
     }
 
     /**
      * Get the full path of a 3D model.
-     * @param modelName - Name of the model file (e.g., 'myModel.gltf').
+     * @param modelName - Name of the model file (e.g., "myModel.gltf").
      * @returns The full path to the model.
      */
     public getModel(modelName: string): string {
@@ -25,7 +25,7 @@ class AssetManager {
 
     /**
      * Get the full path of a texture.
-     * @param textureName - Name of the texture file (e.g., 'myTexture.png').
+     * @param textureName - Name of the texture file (e.g., "myTexture.png").
      * @returns The full path to the texture.
      */
     public getTexture(textureName: string): string {
@@ -34,7 +34,7 @@ class AssetManager {
 
     /**
      * Get the full path of a sound file.
-     * @param soundName - Name of the sound file (e.g., 'mySound.mp3').
+     * @param soundName - Name of the sound file (e.g., "mySound.mp3").
      * @returns The full path to the sound.
      */
     public getSound(soundName: string): string {
@@ -43,18 +43,18 @@ class AssetManager {
 
     /**
      * Get the full path of an asset based on its type.
-     * @param type - The type of asset ('model', 'texture', or 'sound').
+     * @param type - The type of asset ("model", "texture", or "sound").
      * @param assetName - The name of the asset file.
      * @returns The full path to the asset.
      * @throws Error if the asset type is unknown.
      */
-    public getAsset(type: 'model' | 'texture' | 'sound', assetName: string): string {
+    public getAsset(type: "model" | "texture" | "sound", assetName: string): string {
         switch (type) {
-            case 'model':
+            case "model":
                 return this.getModel(assetName);
-            case 'texture':
+            case "texture":
                 return this.getTexture(assetName);
-            case 'sound':
+            case "sound":
                 return this.getSound(assetName);
             default:
                 throw new Error(`Unknown asset type: ${type}`);
