@@ -42,7 +42,7 @@ export class OrbitCamera extends PerspectiveCamera {
      * @param yaw - The rotation around the Y-axis in degrees.
      * @param pitch - The rotation around the X-axis in degrees.
      */
-    public Rotate(yaw: number, pitch: number) {
+    public SetRotation(yaw: number, pitch: number) {
         this.cameraYaw = yaw;
         this.cameraPitch = pitch;
 
@@ -68,6 +68,15 @@ export class OrbitCamera extends PerspectiveCamera {
             targetPosition.y + this.radius * Math.sin(pitchRadians),
             targetPosition.z + this.radius * Math.cos(pitchRadians) * Math.cos(yawRadians)
         );
+    }
+
+    /**
+     * Adds a delta rotation to the current one.
+     * @param yaw - The delta rotation around the Y-axis in degrees.
+     * @param pitch - The delta rotation around the X-axis in degrees.
+     */
+    public Rotate(yaw: number, pitch: number) {
+        this.SetRotation(this.cameraYaw + yaw, this.cameraPitch + pitch)
     }
 
     /**
