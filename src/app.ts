@@ -6,6 +6,7 @@ import GameRouter from "./router/game-router.js";
 import Cache from "./handler/cache.js";
 import logger from "./handler/logger.js";
 import { setupEnvironment } from "./handler/dotenv.js";
+import { logRequest } from "./middleware/logging.js";
 
 setupEnvironment();
 
@@ -27,20 +28,10 @@ const options = {
   cert: readFileSync(process.env.CA_CERTIFICATE)
 };
 
-if (process.env.DEBUG == "true") {
-  // Middleware for request debug
-  app.use((req, _res, next) => {
-    logger.info({
-      message: `Request received for ${req.url}`,
-      context: "app.ts"
-    });
-    next();
-  });
-}
-
 app.set("view engine", "ejs");
 app.set("views", path.join(import.meta.dirname ?? __dirname, "public/views"));
 
+app.use(logRequest());
 app.use("/static", express.static(path.join(import.meta.dirname ?? __dirname, "public/static")));
 
 app.get("/", (_, res) => {

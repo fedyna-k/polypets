@@ -1,4 +1,4 @@
-import { Scene, TextureLoader, WebGLRenderer } from "three";
+import {Color, Scene, TextureLoader, WebGLRenderer} from "three";
 import * as THREE from "three";
 import { OrbitCamera } from "./OrbitCamera.js";
 
@@ -15,6 +15,9 @@ export class GameEngine {
     // Texture loader for loading textures used in materials
     texLoader: TextureLoader;
 
+    // Obj loader for loading .obj models
+    // objLoader : OBJLoader;
+
     /**
      * Constructs a new instance of the GameEngine.
      * @param renderer - WebGLRenderer to render the scene.
@@ -28,13 +31,14 @@ export class GameEngine {
 
         // Initialize the texture loader for creating materials
         this.texLoader = new THREE.TextureLoader();
+        // this.objLoader = new OBJLoader();
     }
 
     /**
      * Starts the game engine, sets up the scene, and initiates event handling.
      * Creates a cube, sets up the camera, and initializes input handling.
      */
-    public Start() {
+    public Start(sceneId : string) {
         // Creating cube geometry
         const _geometry = new THREE.BoxGeometry();
 
@@ -52,18 +56,34 @@ export class GameEngine {
             material
         ];
 
+        this.scene.background = new Color(0.169,1,1);
+
         // Create a cube mesh and add it to the scene
         const cube = new THREE.Mesh(_geometry, _materials);
+        const cube2 = new THREE.Mesh(_geometry, _materials);
+        const cube3 = new THREE.Mesh(_geometry, _materials);
+        const cube4 = new THREE.Mesh(_geometry, _materials);
+
+        cube2.position.set(1,1,1);
+        cube3.position.set(2,1,1);
+        cube4.position.set(1,2,-4);
+
         this.scene.add(cube);
+        this.scene.add(cube2);
+        this.scene.add(cube3);
+        this.scene.add(cube4);
 
         // Set the initial camera position
         this.camera.position.set(0, 0, 5);
 
+        console.log("Adding canvas to container with Id : " + sceneId)
+
         // Get the container element where the scene will be rendered
-        let container = document.getElementById("scene-container");
+        let container = document.getElementById(sceneId);
 
         // Append the renderer's canvas to the container
         container?.appendChild(this.renderer.domElement);
+        this.renderer.domElement.classList.add("three-canva")
 
         // Setup a resize observer for handling dynamic resizing of the renderer
         const resizeRenderer = () => {
@@ -92,6 +112,8 @@ export class GameEngine {
         // Set the camera to orbit around the cube
         this.camera.SetTarget(cube);
 
+        this.camera.Rotate(0, 45);
+
         // Initialize mouse input handling
         this.Input();
     }
@@ -116,7 +138,7 @@ export class GameEngine {
             const deltaY = (event.clientY - prevMouse.y) * sensivity;
 
             // Update the camera's yaw and pitch based on the mouse movement
-            this.camera.Rotate(this.camera.cameraYaw + deltaX, this.camera.cameraPitch + deltaY);
+            this.camera.SetRotation(this.camera.cameraYaw + deltaX, this.camera.cameraPitch + deltaY);
 
             // Store the current mouse position
             prevMouse = { x: event.clientX, y: event.clientY };
@@ -153,8 +175,12 @@ export class GameEngine {
     /**
      * Updates the game engine each frame. This includes updating the camera and rendering the scene.
      */
-    public Update() {
+    public Update(deltaTime : number) {
+        const speed = 8;
+
+        this.camera.Rotate(deltaTime * 10 * speed, 0);
         this.camera.Update();  // Update the camera to ensure it looks at the target
+
         this.renderer.render(this.scene, this.camera);  // Render the scene using the camera
     }
 
