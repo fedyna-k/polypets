@@ -12,6 +12,14 @@ setupEnvironment();
 const port = 443;
 const app = express();
 
+if (process.argv.includes("local")) {
+  process.env.CA_PRIVATE_KEY = "certs/privkey.pem";
+  process.env.CA_CERTIFICATE = "certs/cert.pem";
+}
+
+console.log(process.env);
+
+
 const options = {
   key: readFileSync(process.env.CA_PRIVATE_KEY),
   cert: readFileSync(process.env.CA_CERTIFICATE)
