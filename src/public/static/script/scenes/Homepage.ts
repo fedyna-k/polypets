@@ -9,7 +9,7 @@ const scene3d = new THREE.Scene();
 const gameEngine = new GameEngine(renderer, camera, scene3d);
 
 // Start
-gameEngine.Start("scene-container");
+gameEngine.Start("container");
 
 // Update
 const update = () => {

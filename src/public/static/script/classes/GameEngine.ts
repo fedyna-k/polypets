@@ -34,7 +34,7 @@ export class GameEngine {
      * Starts the game engine, sets up the scene, and initiates event handling.
      * Creates a cube, sets up the camera, and initializes input handling.
      */
-    public Start() {
+    public Start(sceneId : string) {
         // Creating cube geometry
         const _geometry = new THREE.BoxGeometry();
 
@@ -60,7 +60,7 @@ export class GameEngine {
         this.camera.position.set(0, 0, 5);
 
         // Get the container element where the scene will be rendered
-        let container = document.getElementById("scene-container");
+        let container = document.getElementById(sceneId);
 
         // Append the renderer's canvas to the container
         container?.appendChild(this.renderer.domElement);
