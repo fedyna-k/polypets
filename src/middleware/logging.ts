@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import logger from "src/handler/logger.js";
+import logger from "../handler/logger.js";
 
 /**
  * Creates good middleware based on DEBUG env var.
