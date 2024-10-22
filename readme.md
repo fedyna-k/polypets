@@ -18,18 +18,15 @@ For a more detailled installation process, visit the [wiki](https://github.com/f
 
 ### 🏗️ Prerequisites
 
-Make sure `node` and `npm` are installed and to the latest version.
+Make sure `docker` is installed on your machine and to the latest version.
 
-You will also need to have the **development key**, you can ask for it to any contributor.
+You will also need to have the **.env** file, you can ask for it to any contributor.
 
 ### ⚙️ Installing the project
 
+Simply run the following command:
 ```sh
-git clone https://github.com/fedyna-k/polypets.git polypets
-cd polypets
-npm install
-npm run build
-npm start
+docker compose up --build
 ```
 
 ## ⚖️ License ⚖️

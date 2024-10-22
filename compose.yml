@@ -1,0 +1,11 @@
+services:
+  handler:
+    build: ./handler
+    volumes:
+      - logs:/logs
+    ports:
+      - 80:80
+      - 443:443
+
+volumes:
+  logs:

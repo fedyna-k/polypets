@@ -24,7 +24,7 @@ function appendLog(params: LogEntryParameters): void {
   const type = params.type.toUpperCase().padEnd(7, " ");
 
   const logEntry = `[${date}] ${type} (${params.context}) ${params.message} ${params.error ?? ""}\n`;
-  const file = params.type == "error" ? "logs/error.log" : "logs/server.log";
+  const file = params.type == "error" ? "/logs/error.log" : "/logs/server.log";
 
   appendFile(file, logEntry, "utf-8", () => {});
 }

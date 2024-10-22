@@ -1,16 +1,12 @@
 {
   "name": "polypets",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Coucou les polypets",
   "main": "bin/app.js",
   "scripts": {
-    "build": "npm run buildTools & npm run buildApp",
-    "postbuild": "mkdir -p logs && find bin | grep .ts | xargs -I{} rm {}",
-    "buildTools": "tsc -p ./tsconfig.tools.json",
-    "buildApp": "tsc",
-    "postbuildApp": "cp -r ./src/public ./bin",
-    "start": "node .",
-    "tools": "node ./bin/__tools__/index.js"
+    "build": "tsc",
+    "postbuild": "cp -r ./src/public ./bin && find bin | grep .ts | xargs -I{} rm {}",
+    "start": "node ."
   },
   "keywords": [],
   "type": "module",
