@@ -4,10 +4,7 @@ import { readFileSync } from "fs";
 import GameRouter from "./router/game-router.js";
 import Cache from "./handler/cache.js";
 import logger from "./handler/logger.js";
-import { setupEnvironment } from "./handler/dotenv.js";
 import { logRequest } from "./middleware/logging.js";
-
-setupEnvironment();
 
 const port = 443;
 const app = express();
@@ -15,8 +12,8 @@ const app = express();
 let caPrivateKeyPath, caCertificatePath;
 
 if (process.env.LOCAL_SERVER == "true") {
-  caPrivateKeyPath = "certs/dev/privkey.pem";
-  caCertificatePath = "certs/dev/cert.pem";
+  caPrivateKeyPath = "/app/certs/dev/privkey.pem";
+  caCertificatePath = "/app/certs/dev/cert.pem";
 
   logger.info({
     message: "Running app with development certificates (not CA signed).",
@@ -24,8 +21,8 @@ if (process.env.LOCAL_SERVER == "true") {
   });
 }
 else {
-  caPrivateKeyPath = "certs/prd/" + process.env.CA_PRIVATE_KEY_NAME;
-  caCertificatePath = "certs/prd/" + process.env.CA_CERTIFICATE_NAME;
+  caPrivateKeyPath = "/app/certs/prd/" + process.env.CA_PRIVATE_KEY_NAME;
+  caCertificatePath = "/app/certs/prd/" + process.env.CA_CERTIFICATE_NAME;
 
   logger.info({
     message: "Running app with production certificates (signed by LetsEncrypt).",
@@ -34,8 +31,8 @@ else {
 }
 
 const options = {
-  key: readFileSync("certs/prd/" + caPrivateKeyPath),
-  cert: readFileSync("certs/prd/" + caCertificatePath)
+  key: readFileSync(caPrivateKeyPath),
+  cert: readFileSync(caCertificatePath)
 };
 
 app.set("view engine", "ejs");

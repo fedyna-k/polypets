@@ -6,6 +6,11 @@ services:
     ports:
       - 80:80
       - 443:443
+    environment:
+      - CA_PRIVATE_KEY_NAME=${CA_PRIVATE_KEY_NAME}
+      - CA_CERTIFICATE_NAME=${CA_CERTIFICATE_NAME}
+      - LOCAL_SERVER=${LOCAL_SERVER}
+      - DEBUG=${DEBUG}
 
 volumes:
   logs:
