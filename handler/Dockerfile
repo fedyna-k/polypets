@@ -16,7 +16,7 @@ COPY . .
 
 RUN npm run build
 
-COPY ${CERTIFICATE_BASE_PATH} ./handler/certs/prd
+COPY ${CERTIFICATE_BASE_PATH} ./certs/prd
 
 EXPOSE 80
 EXPOSE 443
