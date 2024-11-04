@@ -16,8 +16,7 @@
     "ejs": "^3.1.10",
     "express": "^4.21.0",
     "socket.io": "^4.7.5",
-    "three": "^0.168.0",
-    "three-addons": "^1.2.0"
+    "three": "^0.170.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
