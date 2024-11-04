@@ -3,7 +3,7 @@ import Cache from "./cache.js";
 
 function create() {
   const bytes = randomBytes(6);
-  const randomId = bytes.toString("base64");
+  const randomId = bytes.toString("base64url");
 
   Cache.add({
     category: "game",
