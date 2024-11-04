@@ -1,6 +1,9 @@
 import {Color, Scene, TextureLoader, WebGLRenderer} from "three";
 import * as THREE from "three";
 import { OrbitCamera } from "./orbit-camera.js";
+import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
+import { MTLLoader } from "three/addons/loaders/MTLLoader.js";
+import AssetManager from "./asset-manager.js";
 
 export class GameEngine {
     // WebGL renderer for rendering the scene
@@ -16,7 +19,10 @@ export class GameEngine {
     texLoader: TextureLoader;
 
     // Obj loader for loading .obj models
-    // objLoader : OBJLoader;
+    objLoader : OBJLoader;
+
+    // Obj loader for loading .mtl files
+    mtlLoader : MTLLoader;
 
     /**
      * Constructs a new instance of the GameEngine.
@@ -31,7 +37,9 @@ export class GameEngine {
 
         // Initialize the texture loader for creating materials
         this.texLoader = new THREE.TextureLoader();
-        // this.objLoader = new OBJLoader();
+        this.objLoader = new OBJLoader();
+        this.mtlLoader = new MTLLoader();
+        this.mtlLoader.setMaterialOptions( { invertTrProperty: false } );
     }
 
     /**
@@ -39,44 +47,50 @@ export class GameEngine {
      * Creates a cube, sets up the camera, and initializes input handling.
      */
     public Start(sceneId : string) {
-        // Creating cube geometry
-        const _geometry = new THREE.BoxGeometry();
 
-        // Texture path for the cube material
-        const texturePath = "/static/resources/textures/cobblestone.png";
-        const material = this.CreateMaterial(texturePath);
+        const directionalLight = new THREE.DirectionalLight( 0xffffff, 10 );
 
-        // Apply the material to all faces of the cube
-        const _materials = [
-            material,
-            material,
-            material,
-            material,
-            material,
-            material
-        ];
+        directionalLight.position.set(10, 10, 10);
+        directionalLight.castShadow = false;
+
+        this.mtlLoader.load(
+            AssetManager.getMaterial("farm.mtl"),
+            (materials) => {
+                materials.preload();
+                console.log(materials);
+                this.objLoader.setMaterials(materials);
+                this.objLoader.load(
+                    AssetManager.getModel("farm.obj"),
+                    (object) => {
+
+                        directionalLight.target = object;
+                        object.scale.set(0.1, 0.1, 0.1);
+                        this.scene.add(object);
+
+                        // Set the camera to orbit around the cube
+                        this.camera.SetTarget(object);
+
+                        this.camera.SetRadius(50);
+                        this.camera.Rotate(0, 35);
+                    },
+                    (xhr) => {
+                        console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+            },
+            (xhr: { loaded: number; total: number; }) => {
+                console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+            },
+            () => {
+                console.log("An error happened");
+            }
+        );
 
         this.scene.background = new Color(0.169,1,1);
-
-        // Create a cube mesh and add it to the scene
-        const cube = new THREE.Mesh(_geometry, _materials);
-        const cube2 = new THREE.Mesh(_geometry, _materials);
-        const cube3 = new THREE.Mesh(_geometry, _materials);
-        const cube4 = new THREE.Mesh(_geometry, _materials);
-
-        cube2.position.set(1,1,1);
-        cube3.position.set(2,1,1);
-        cube4.position.set(1,2,-4);
-
-        this.scene.add(cube);
-        this.scene.add(cube2);
-        this.scene.add(cube3);
-        this.scene.add(cube4);
-
-        // Set the initial camera position
-        this.camera.position.set(0, 0, 5);
-
-        console.log("Adding canvas to container with Id : " + sceneId);
+        this.scene.add( directionalLight );
 
         // Get the container element where the scene will be rendered
         const container = document.getElementById(sceneId);
@@ -108,11 +122,6 @@ export class GameEngine {
 
         // Perform the initial resizing of the renderer
         resizeRenderer();
-
-        // Set the camera to orbit around the cube
-        this.camera.SetTarget(cube);
-
-        this.camera.Rotate(0, 45);
 
         // Initialize mouse input handling
         this.Input();
@@ -176,7 +185,7 @@ export class GameEngine {
      * Updates the game engine each frame. This includes updating the camera and rendering the scene.
      */
     public Update(deltaTime : number) {
-        const speed = 8;
+        const speed = 3;
 
         this.camera.Rotate(deltaTime * 10 * speed, 0);
         this.camera.Update();  // Update the camera to ensure it looks at the target
@@ -189,6 +198,7 @@ export class GameEngine {
      * @param texturePath - Path to the texture image file.
      * @returns A Three.js material with the applied texture.
      */
+    /*
     private CreateMaterial(texturePath: string) {
         // Load the texture from the specified path
         const texture = this.texLoader.load(texturePath);
@@ -200,4 +210,5 @@ export class GameEngine {
         // Return a basic material with the texture applied
         return new THREE.MeshBasicMaterial({ map: texture });
     }
+    */
 }
