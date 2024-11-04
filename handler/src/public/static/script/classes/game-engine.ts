@@ -2,6 +2,7 @@ import {Color, Scene, TextureLoader, WebGLRenderer} from "three";
 import * as THREE from "three";
 import { OrbitCamera } from "./orbit-camera.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
+import { MTLLoader } from "three/addons/loaders/MTLLoader.js";
 import AssetManager from "./asset-manager.js";
 
 export class GameEngine {
@@ -20,6 +21,9 @@ export class GameEngine {
     // Obj loader for loading .obj models
     objLoader : OBJLoader;
 
+    // Obj loader for loading .mtl files
+    mtlLoader : MTLLoader;
+
     /**
      * Constructs a new instance of the GameEngine.
      * @param renderer - WebGLRenderer to render the scene.
@@ -34,6 +38,7 @@ export class GameEngine {
         // Initialize the texture loader for creating materials
         this.texLoader = new THREE.TextureLoader();
         this.objLoader = new OBJLoader();
+        this.mtlLoader = new MTLLoader();
     }
 
     /**
@@ -42,31 +47,43 @@ export class GameEngine {
      */
     public Start(sceneId : string) {
 
-        let farmObject : THREE.Object3D;
+        this.mtlLoader.load(
+            AssetManager.getMaterial("farm.mtl"),
+            (materials) => {
+                materials.preload();
+                console.log(materials);
+                this.objLoader.setMaterials(materials);
+                this.objLoader.load(
+                    AssetManager.getModel("farm.obj"),
+                    (object) => {
+                        object.scale.set(0.1, 0.1, 0.1);
+                        this.scene.add(object);
 
-        this.objLoader.load(
-            AssetManager.getModel("farm.obj"),
-            (object) => {
-                farmObject = object;
-                this.scene.add(object);
+                        // Set the camera to orbit around the cube
+                        this.camera.SetTarget(object);
 
-                // Set the camera to orbit around the cube
-                this.camera.SetTarget(farmObject);
-
-                this.camera.Rotate(0, 45);
+                        this.camera.SetRadius(50);
+                        this.camera.Rotate(0, 35);
+                    },
+                    (xhr) => {
+                        console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
             },
-            (xhr) => {
+            (xhr: { loaded: number; total: number; }) => {
                 console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
             },
-            (error) => {
-                console.log(error);
+            () => {
+                console.log("An error happened");
             }
         );
 
-        this.scene.background = new Color(0.169,1,1);
 
-        // Set the initial camera position
-        this.camera.position.set(0, 0, 5);
+
+        this.scene.background = new Color(0.169,1,1);
 
         // Get the container element where the scene will be rendered
         const container = document.getElementById(sceneId);

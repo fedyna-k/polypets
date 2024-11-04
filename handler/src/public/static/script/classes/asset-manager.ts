@@ -1,26 +1,35 @@
-import * as path from "path";
-
 class AssetManager {
     // Base paths for assets
     private basePath: string;
     private modelsPath: string;
+    private materialPath: string;
     private texturesPath: string;
     private soundsPath: string;
 
     constructor() {
-        this.basePath = path.join(__dirname, "../public/static/resources/assets");
-        this.modelsPath = path.join(this.basePath, "models");
-        this.texturesPath = path.join(this.basePath, "textures");
-        this.soundsPath = path.join(this.basePath, "sounds");
+        this.basePath = "/static/resources/assets";
+        this.modelsPath = this.basePath + "/models";
+        this.materialPath = this.basePath + "/materials";
+        this.texturesPath = this.basePath + "/textures";
+        this.soundsPath = this.basePath + "/sounds";
     }
 
     /**
      * Get the full path of a 3D model.
-     * @param modelName - Name of the model file (e.g., "myModel.gltf").
+     * @param modelName - Name of the model file (e.g., "myModel.obj").
      * @returns The full path to the model.
      */
     public getModel(modelName: string): string {
-        return path.join(this.modelsPath, modelName);
+        return this.modelsPath + "/" + modelName;
+    }
+
+    /**
+     * Get the full path of a material file (.mtl).
+     * @param materialName - Name of the mtl file (e.g., "myModel.mtl").
+     * @returns The full path to the material file.
+     */
+    public getMaterial(materialName: string): string {
+        return this.materialPath + "/" + materialName;
     }
 
     /**
@@ -29,7 +38,7 @@ class AssetManager {
      * @returns The full path to the texture.
      */
     public getTexture(textureName: string): string {
-        return path.join(this.texturesPath, textureName);
+        return this.texturesPath + "/" + textureName;
     }
 
     /**
@@ -38,7 +47,7 @@ class AssetManager {
      * @returns The full path to the sound.
      */
     public getSound(soundName: string): string {
-        return path.join(this.soundsPath, soundName);
+        return this.soundsPath + "/" + soundName;
     }
 
     /**
