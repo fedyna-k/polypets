@@ -39,6 +39,7 @@ export class GameEngine {
         this.texLoader = new THREE.TextureLoader();
         this.objLoader = new OBJLoader();
         this.mtlLoader = new MTLLoader();
+        this.mtlLoader.setMaterialOptions( { invertTrProperty: false } );
     }
 
     /**
@@ -46,6 +47,11 @@ export class GameEngine {
      * Creates a cube, sets up the camera, and initializes input handling.
      */
     public Start(sceneId : string) {
+
+        const directionalLight = new THREE.DirectionalLight( 0xffffff, 10 );
+
+        directionalLight.position.set(10, 10, 10);
+        directionalLight.castShadow = false;
 
         this.mtlLoader.load(
             AssetManager.getMaterial("farm.mtl"),
@@ -56,6 +62,8 @@ export class GameEngine {
                 this.objLoader.load(
                     AssetManager.getModel("farm.obj"),
                     (object) => {
+
+                        directionalLight.target = object;
                         object.scale.set(0.1, 0.1, 0.1);
                         this.scene.add(object);
 
@@ -81,9 +89,8 @@ export class GameEngine {
             }
         );
 
-
-
         this.scene.background = new Color(0.169,1,1);
+        this.scene.add( directionalLight );
 
         // Get the container element where the scene will be rendered
         const container = document.getElementById(sceneId);
@@ -178,7 +185,7 @@ export class GameEngine {
      * Updates the game engine each frame. This includes updating the camera and rendering the scene.
      */
     public Update(deltaTime : number) {
-        const speed = 8;
+        const speed = 3;
 
         this.camera.Rotate(deltaTime * 10 * speed, 0);
         this.camera.Update();  // Update the camera to ensure it looks at the target
