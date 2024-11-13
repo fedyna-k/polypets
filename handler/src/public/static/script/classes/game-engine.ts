@@ -48,11 +48,6 @@ export class GameEngine {
      */
     public Start(sceneId : string) {
 
-        const directionalLight = new THREE.DirectionalLight( 0xffffff, 10 );
-
-        directionalLight.position.set(10, 10, 10);
-        directionalLight.castShadow = false;
-
         this.mtlLoader.load(
             AssetManager.getMaterial("farm.mtl"),
             (materials) => {
@@ -62,9 +57,9 @@ export class GameEngine {
                 this.objLoader.load(
                     AssetManager.getModel("farm.obj"),
                     (object) => {
-
-                        directionalLight.target = object;
                         object.scale.set(0.1, 0.1, 0.1);
+                        object.name = "farm";
+
                         this.scene.add(object);
 
                         // Set the camera to orbit around the cube
@@ -72,6 +67,14 @@ export class GameEngine {
 
                         this.camera.SetRadius(50);
                         this.camera.Rotate(0, 35);
+
+                        const directionalLight = new THREE.DirectionalLight( 0xffffff, 11 );
+
+                        directionalLight.target = object;
+                        directionalLight.position.set(this.camera.position.x, this.camera.position.y, this.camera.position.z);
+                        directionalLight.castShadow = false;
+
+                        this.scene.add(directionalLight);
                     },
                     (xhr) => {
                         console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
@@ -90,7 +93,6 @@ export class GameEngine {
         );
 
         this.scene.background = new Color(0.169,1,1);
-        this.scene.add( directionalLight );
 
         // Get the container element where the scene will be rendered
         const container = document.getElementById(sceneId);
@@ -185,9 +187,13 @@ export class GameEngine {
      * Updates the game engine each frame. This includes updating the camera and rendering the scene.
      */
     public Update(deltaTime : number) {
-        const speed = 3;
+        const speed = 0.5;
 
-        this.camera.Rotate(deltaTime * 10 * speed, 0);
+        const farm = this.scene.getObjectByName("farm");
+
+        farm?.rotateY(deltaTime * speed);
+
+        // this.camera.Rotate(deltaTime * 10 * speed, 0);
         this.camera.Update();  // Update the camera to ensure it looks at the target
 
         this.renderer.render(this.scene, this.camera);  // Render the scene using the camera
