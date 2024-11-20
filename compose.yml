@@ -1,11 +1,22 @@
 services:
-  handler:
-    build: ./handler
-    volumes:
-      - logs:/logs
+  nginx:
+    image: nginx:mainline-alpine
     ports:
       - 80:80
       - 443:443
+    volumes:
+      - ./nginx/certs:/etc/nginx/certs:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./frontend/public/static:/usr/share/nginx/html/static:ro
+    depends_on:
+      - frontend
+
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./nginx/certs:/app/certs:ro
+      - ./frontend/public/views:/app/views:rw
+      - logs:/logs
     environment:
       - CA_PRIVATE_KEY_NAME=${CA_PRIVATE_KEY_NAME}
       - CA_CERTIFICATE_NAME=${CA_CERTIFICATE_NAME}

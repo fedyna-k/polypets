@@ -16,7 +16,7 @@ gameEngine.Start("scene-container");
 let lastTime = 0;
 
 // Update
-const update = (time : number) => {
+const update = (time) => {
     const deltaTime = (time - lastTime) / 1000; // In Milliseconds
     lastTime = time;
 

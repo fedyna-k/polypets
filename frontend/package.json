@@ -5,7 +5,6 @@
   "main": "bin/app.js",
   "scripts": {
     "build": "tsc",
-    "postbuild": "cp -a ./src/public ./bin && find bin -type f | grep \"\\.ts$\" | xargs -I{} rm {}",
     "start": "node ."
   },
   "keywords": [],

@@ -1,4 +1,4 @@
-import {Color, Scene, TextureLoader, WebGLRenderer} from "three";
+import { Color, Scene, TextureLoader, WebGLRenderer } from "three";
 import * as THREE from "three";
 import { OrbitCamera } from "./orbit-camera.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
@@ -7,22 +7,22 @@ import AssetManager from "./asset-manager.js";
 
 export class GameEngine {
     // WebGL renderer for rendering the scene
-    renderer: WebGLRenderer;
+    renderer;
 
     // Orbit camera for viewing the scene
-    camera: OrbitCamera;
+    camera;
 
     // Three.js scene object
-    scene: Scene;
+    scene;
 
     // Texture loader for loading textures used in materials
-    texLoader: TextureLoader;
+    texLoader;
 
     // Obj loader for loading .obj models
-    objLoader : OBJLoader;
+    objLoader;
 
     // Obj loader for loading .mtl files
-    mtlLoader : MTLLoader;
+    mtlLoader;
 
     /**
      * Constructs a new instance of the GameEngine.
@@ -30,7 +30,7 @@ export class GameEngine {
      * @param camera - OrbitCamera to provide a view of the scene.
      * @param scene - The Three.js scene that contains objects.
      */
-    public constructor(renderer: WebGLRenderer, camera: OrbitCamera, scene: Scene) {
+    constructor(renderer, camera, scene) {
         this.renderer = renderer;
         this.camera = camera;
         this.scene = scene;
@@ -46,7 +46,7 @@ export class GameEngine {
      * Starts the game engine, sets up the scene, and initiates event handling.
      * Creates a cube, sets up the camera, and initializes input handling.
      */
-    public Start(sceneId : string) {
+    Start(sceneId) {
 
         this.mtlLoader.load(
             AssetManager.getMaterial("farm.mtl"),
@@ -84,7 +84,7 @@ export class GameEngine {
                     }
                 );
             },
-            (xhr: { loaded: number; total: number; }) => {
+            (xhr) => {
                 console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
             },
             () => {
@@ -132,7 +132,7 @@ export class GameEngine {
     /**
      * Sets up input handling for mouse events, including camera rotation and zooming.
      */
-    private Input() {
+    Input() {
         const sensivity = 0.2;  // Lowered sensitivity to improve control
         const canvas = this.renderer.domElement;
 
@@ -141,7 +141,7 @@ export class GameEngine {
         let isDragging = false;
 
         // Mouse move event handler for rotating the camera
-        const onMouseMove = (event: MouseEvent) => {
+        const onMouseMove = (event) => {
             if (!isDragging) return;
 
             // Calculate the mouse movement (delta) from the last recorded position
@@ -156,7 +156,7 @@ export class GameEngine {
         };
 
         // Mouse down event handler to start camera movement
-        const onMouseDown = (event: MouseEvent) => {
+        const onMouseDown = (event) => {
             isDragging = true;
             prevMouse = { x: event.clientX, y: event.clientY };
             console.log("Mouse button pressed");
@@ -169,7 +169,7 @@ export class GameEngine {
         };
 
         // Mouse wheel event handler to adjust the camera's distance from the target
-        const onMouseWheel = (event: WheelEvent) => {
+        const onMouseWheel = (event) => {
             console.log("Mouse wheel scrolled:", event.deltaY);
 
             // Update the camera's radius based on the scroll wheel input
@@ -186,7 +186,7 @@ export class GameEngine {
     /**
      * Updates the game engine each frame. This includes updating the camera and rendering the scene.
      */
-    public Update(deltaTime : number) {
+    Update(deltaTime) {
         const speed = 0.5;
 
         const farm = this.scene.getObjectByName("farm");
@@ -205,7 +205,7 @@ export class GameEngine {
      * @returns A Three.js material with the applied texture.
      */
     /*
-    private CreateMaterial(texturePath: string) {
+    CreateMaterial(texturePath: string) {
         // Load the texture from the specified path
         const texture = this.texLoader.load(texturePath);
 
