@@ -36,10 +36,9 @@ const options = {
 };
 
 app.set("view engine", "ejs");
-app.set("views", "/app/bin/public/views");
+app.set("views", "/app/public/views");
 
 app.use(logRequest());
-app.use("/static", express.static("/app/bin/public/static"));
 
 app.get("/", (_, res) => {
   res.render("index");

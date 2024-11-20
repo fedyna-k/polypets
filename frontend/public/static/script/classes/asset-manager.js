@@ -1,17 +1,17 @@
 class AssetManager {
     // Base paths for assets
-    private basePath: string;
-    private modelsPath: string;
-    private materialPath: string;
-    private texturesPath: string;
-    private soundsPath: string;
+    #basePath;
+    #modelsPath;
+    #materialPath;
+    #texturesPath;
+    #soundsPath;
 
     constructor() {
-        this.basePath = "/static/resources/assets";
-        this.modelsPath = this.basePath + "/models";
-        this.materialPath = this.basePath + "/materials";
-        this.texturesPath = this.basePath + "/textures";
-        this.soundsPath = this.basePath + "/sounds";
+        this.#basePath = "/static/resources/assets";
+        this.#modelsPath = this.#basePath + "/models";
+        this.#materialPath = this.#basePath + "/materials";
+        this.#texturesPath = this.#basePath + "/textures";
+        this.#soundsPath = this.#basePath + "/sounds";
     }
 
     /**
@@ -19,8 +19,8 @@ class AssetManager {
      * @param modelName - Name of the model file (e.g., "myModel.obj").
      * @returns The full path to the model.
      */
-    public getModel(modelName: string): string {
-        return this.modelsPath + "/" + modelName;
+    getModel(modelName) {
+        return this.#modelsPath + "/" + modelName;
     }
 
     /**
@@ -28,8 +28,8 @@ class AssetManager {
      * @param materialName - Name of the mtl file (e.g., "myModel.mtl").
      * @returns The full path to the material file.
      */
-    public getMaterial(materialName: string): string {
-        return this.materialPath + "/" + materialName;
+    getMaterial(materialName) {
+        return this.#materialPath + "/" + materialName;
     }
 
     /**
@@ -37,8 +37,8 @@ class AssetManager {
      * @param textureName - Name of the texture file (e.g., "myTexture.png").
      * @returns The full path to the texture.
      */
-    public getTexture(textureName: string): string {
-        return this.texturesPath + "/" + textureName;
+    getTexture(textureName) {
+        return this.#texturesPath + "/" + textureName;
     }
 
     /**
@@ -46,8 +46,8 @@ class AssetManager {
      * @param soundName - Name of the sound file (e.g., "mySound.mp3").
      * @returns The full path to the sound.
      */
-    public getSound(soundName: string): string {
-        return this.soundsPath + "/" + soundName;
+    getSound(soundName) {
+        return this.#soundsPath + "/" + soundName;
     }
 
     /**
@@ -57,7 +57,7 @@ class AssetManager {
      * @returns The full path to the asset.
      * @throws Error if the asset type is unknown.
      */
-    public getAsset(type: "model" | "texture" | "sound", assetName: string): string {
+    getAsset(type, assetName) {
         switch (type) {
             case "model":
                 return this.getModel(assetName);

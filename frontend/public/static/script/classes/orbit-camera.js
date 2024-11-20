@@ -2,16 +2,16 @@ import { Object3D, PerspectiveCamera } from "three";
 
 export class OrbitCamera extends PerspectiveCamera {
     // The target object that the camera will orbit around
-    private target: Object3D = new Object3D();
+    target = new Object3D();
 
     // The distance between the camera and the target object
-    private radius: number = 10;
+    radius = 10;
 
     // Camera's rotation around the target on the horizontal axis (yaw)
-    public cameraYaw: number = 0;
+    cameraYaw = 0;
 
     // Camera's rotation around the target on the vertical axis (pitch)
-    public cameraPitch: number = 0;
+    cameraPitch = 0;
 
     /**
      * Creates an instance of OrbitCamera, inheriting from Three.js' PerspectiveCamera.
@@ -20,7 +20,7 @@ export class OrbitCamera extends PerspectiveCamera {
      * @param near - The near clipping plane.
      * @param far - The far clipping plane.
      */
-    constructor(fov: number, aspect: number, near: number, far: number) {
+    constructor(fov, aspect, near, far) {
         super(fov, aspect, near, far);
         this.target = new Object3D(); // Initialize a default target object.
     }
@@ -29,7 +29,7 @@ export class OrbitCamera extends PerspectiveCamera {
      * Adjusts the camera to look directly at the target object.
      * This method updates the camera's orientation to face the position of the target.
      */
-    public LookAtTarget() {
+    LookAtTarget() {
         // Optionally set the camera's up direction (commented out for now).
         // this.up.set(0, 1, 0);
 
@@ -42,15 +42,15 @@ export class OrbitCamera extends PerspectiveCamera {
      * @param yaw - The rotation around the Y-axis in degrees.
      * @param pitch - The rotation around the X-axis in degrees.
      */
-    public SetRotation(yaw: number, pitch: number) {
+    SetRotation(yaw, pitch) {
         this.cameraYaw = yaw;
         this.cameraPitch = pitch;
 
         // Helper function to convert degrees to radians.
-        const degreesToRads = (deg: number) => (deg * Math.PI) / 180.0;
+        const degreesToRads = (deg) => (deg * Math.PI) / 180.0;
 
         // Helper function to clamp a value between two bounds.
-        const clamp = (value: number, a: number, b: number) => Math.max(a, Math.min(value, b));
+        const clamp = (value, a, b) => Math.max(a, Math.min(value, b));
 
         // Get the target's current position.
         const targetPosition = this.target.position;
@@ -75,7 +75,7 @@ export class OrbitCamera extends PerspectiveCamera {
      * @param yaw - The delta rotation around the Y-axis in degrees.
      * @param pitch - The delta rotation around the X-axis in degrees.
      */
-    public Rotate(yaw: number, pitch: number) {
+    Rotate(yaw, pitch) {
         this.SetRotation(this.cameraYaw + yaw, this.cameraPitch + pitch);
     }
 
@@ -83,7 +83,7 @@ export class OrbitCamera extends PerspectiveCamera {
      * Gets the current radius (distance between the camera and the target).
      * @returns The current radius.
      */
-    public GetRadius(): number {
+    GetRadius() {
         return this.radius;
     }
 
@@ -91,7 +91,7 @@ export class OrbitCamera extends PerspectiveCamera {
      * Sets the radius (distance between the camera and the target).
      * @param value - The new radius value.
      */
-    public SetRadius(value: number) {
+    SetRadius(value) {
         this.radius = value;
     }
 
@@ -99,7 +99,7 @@ export class OrbitCamera extends PerspectiveCamera {
      * Gets the current target object that the camera is orbiting around.
      * @returns The current target object.
      */
-    public GetTarget(): Object3D {
+    GetTarget() {
         return this.target;
     }
 
@@ -107,7 +107,7 @@ export class OrbitCamera extends PerspectiveCamera {
      * Sets a new target object for the camera to orbit around.
      * @param object - The new target object (an instance of `Object3D`).
      */
-    public SetTarget(object: Object3D) {
+    SetTarget(object) {
         this.target = object;
     }
 
@@ -116,7 +116,7 @@ export class OrbitCamera extends PerspectiveCamera {
      * This should be called each frame to ensure the camera's orientation remains consistent
      * as it rotates around the target.
      */
-    public Update() {
+    Update() {
         this.LookAtTarget();
     }
 }
