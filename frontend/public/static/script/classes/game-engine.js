@@ -209,6 +209,7 @@ export class GameEngine {
     SetupLoadingManagerEvents() {
         this.loadingManager.onLoad = function ( ) {
             console.log( "Loading complete!");
+            document.getElementById("loader").style.display = "none";
         };
 
         this.loadingManager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
