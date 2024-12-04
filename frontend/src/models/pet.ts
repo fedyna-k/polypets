@@ -89,9 +89,9 @@ export class Pet {
     this.damage = this.base_damage;
 
     // Apply each buff
-    this.food.forEach((item) => {
-    this.life += item.life_buff;
-    this.damage += item.damage_buff;
+    this.food.forEach((item: Food): void => {
+      this.life += item.life_buff;
+      this.damage += item.damage_buff;
     });
 
     console.log(
