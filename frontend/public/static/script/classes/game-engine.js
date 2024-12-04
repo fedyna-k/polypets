@@ -213,7 +213,7 @@ export class GameEngine {
         };
 
         this.loadingManager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
-            document.getElementById("loading-bar").style.setProperty("--progress", `${100 * (1 - itemsLoaded / itemsLoaded)}%`)
+            document.getElementById("loading-bar").style.setProperty("--progress", `${100 * (1 - itemsLoaded / itemsLoaded)}%`);
             console.log( "Loading file: " + url + ".\nLoaded " + itemsLoaded + " of " + itemsTotal + " files." );
         };
 
