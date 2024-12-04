@@ -1,6 +1,5 @@
-import { Color, Scene, TextureLoader, WebGLRenderer } from "three";
+import {Color, LoadingManager} from "three";
 import * as THREE from "three";
-import { OrbitCamera } from "./orbit-camera.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { MTLLoader } from "three/addons/loaders/MTLLoader.js";
 import AssetManager from "./asset-manager.js";
@@ -24,6 +23,9 @@ export class GameEngine {
     // Obj loader for loading .mtl files
     mtlLoader;
 
+    // Loading manager for obj loader handling
+    loadingManager;
+
     /**
      * Constructs a new instance of the GameEngine.
      * @param renderer - WebGLRenderer to render the scene.
@@ -36,8 +38,10 @@ export class GameEngine {
         this.scene = scene;
 
         // Initialize the texture loader for creating materials
+        this.loadingManager = new LoadingManager();
+        this.SetupLoadingManagerEvents();
         this.texLoader = new THREE.TextureLoader();
-        this.objLoader = new OBJLoader();
+        this.objLoader = new OBJLoader(this.loadingManager);
         this.mtlLoader = new MTLLoader();
         this.mtlLoader.setMaterialOptions( { invertTrProperty: false } );
     }
@@ -200,21 +204,21 @@ export class GameEngine {
     }
 
     /**
-     * Creates a material with a texture, applying nearest filtering for both magnification and minification.
-     * @param texturePath - Path to the texture image file.
-     * @returns A Three.js material with the applied texture.
+     * Method to initialize the behavior of the loading manager
      */
-    /*
-    CreateMaterial(texturePath: string) {
-        // Load the texture from the specified path
-        const texture = this.texLoader.load(texturePath);
+    SetupLoadingManagerEvents() {
+        this.loadingManager.onLoad = function ( ) {
+            console.log( "Loading complete!");
+            document.getElementById("loader").style.display = "none";
+        };
 
-        // Apply nearest filtering for both magnification and minification
-        texture.magFilter = THREE.NearestFilter;
-        texture.minFilter = THREE.NearestFilter;
+        this.loadingManager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+            document.getElementById("loading-bar").style.setProperty("--progress", `${100 * (1 - itemsLoaded / itemsLoaded)}%`)
+            console.log( "Loading file: " + url + ".\nLoaded " + itemsLoaded + " of " + itemsTotal + " files." );
+        };
 
-        // Return a basic material with the texture applied
-        return new THREE.MeshBasicMaterial({ map: texture });
+        this.loadingManager.onError = function ( url ) {
+            console.log( "There was an error loading " + url );
+        };
     }
-    */
 }

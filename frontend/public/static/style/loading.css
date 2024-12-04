@@ -1,0 +1,43 @@
+#loader {
+  background: #72ffff;
+  display: grid;
+  place-content: center;
+  gap: 1em;
+  place-items: center;
+  height: 100dvh;
+}
+
+#loader div {
+  font-size: 3em;
+  font-weight: bold;
+}
+
+#loader #loading-bar {
+  position: relative;
+  width: 5em;
+  height: 0.25em;
+  border-radius: 0.15em;
+  background-color: #333;
+}
+
+#loader #loading-bar::before {
+  position: absolute;
+  content: "";
+  background-color: #fff;
+  top: 0;
+  left: 0;
+  right: var(--progress);
+  bottom: 0;
+  border-radius: 0.15em;
+}
+
+#loader img {
+  transition: left 200ms cubic-bezier(.5,.15,.52,.85);
+  animation: spin 1s forwards infinite cubic-bezier(.5,.15,.52,.85);
+  width: 15em;
+}
+
+@keyframes spin {
+  from { transform: rotateZ(0deg); }
+  to { transform: rotateZ(360deg); }
+}
