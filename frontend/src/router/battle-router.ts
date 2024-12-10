@@ -1,13 +1,11 @@
 import express from "express";
 import Battle from "../handler/battle.js";
-import Game from "../handler/game.js";
 
 const BattleRouter = express.Router();
 BattleRouter.use(express.json());
 
-BattleRouter.get("/", (_, res) => {
-    const game = Game.create();
-    res.send(Battle.create(game.id));
+BattleRouter.get("/:gameId", (req, res) => {
+    res.send(Battle.create(req.params.gameId));
 });
 
 export default BattleRouter;
