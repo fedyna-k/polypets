@@ -17,6 +17,9 @@ export class Pet {
 
   constructor(public species: PetIDs) {
     this.petData = GameData.petData[species];
+
+    this.max_life = this.petData.base_life;
+    this.life = this.max_life;
   }
 
   /**

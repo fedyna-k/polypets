@@ -5,6 +5,8 @@ import GameRouter from "./router/game-router.js";
 import Cache from "./handler/cache.js";
 import logger from "./handler/logger.js";
 import { logRequest } from "./middleware/logging.js";
+import {GameData} from "./models/game-data.js";
+import BattleRouter from "./router/battle-router.js";
 
 const port = 443;
 const app = express();
@@ -49,8 +51,12 @@ app.get("/three", (_, res) => {
 });
 
 app.use("/game", GameRouter);
+app.use("/battle", BattleRouter);
 
 Cache.createCategory("game");
+Cache.createCategory("battle");
+
+GameData.initializeData();
 
 https.createServer(options, app).listen(port, () => {
   logger.info({
