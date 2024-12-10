@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="../static/script/video/video.js"></script>
 </head>
 <body>
-    
+    <h1>PC - Vue Vidéo</h1>
+    <div id="socket-num"></div>
+    <video id="remoteVideo" autoplay playsinline style="width: 80%;"></video>
+    <canvas id="frameCanvas" style="display: block; margin-top: 20px; border: 1px solid black;"></canvas>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="../static/script/video/video.js"></script>
 </body>
 </html>

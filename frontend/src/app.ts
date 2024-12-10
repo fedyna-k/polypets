@@ -52,6 +52,10 @@ app.get("/video", (_, res) => {
   res.render("video");
 });
 
+app.get("/phone", (_, res) => {
+  res.render("phone-video");
+});
+
 app.get("/three", (_, res) => {
   res.render("three");
 });
@@ -65,17 +69,32 @@ const server = https.createServer(options, app);
 const io = new Server(server);
 
 // Managing Web Sockets
+// io.on("connection", (socket: Socket) => {
+//   logger.info({
+//     message: `User connection: ${socket.id}`,
+//     context: "app.ts"
+//   });
+
+//   socket.on("message", (message: string) => {
+//     logger.info({
+//       message: `Message reveived from ${socket.id} : ${message}`,
+//       context: "app.ts"
+//     });
+//   });
+// });
+
 io.on("connection", (socket: Socket) => {
-  logger.info({
-    message: `User connection: ${socket.id}`,
-    context: "app.ts"
+  console.log("Nouvelle connexion WebSocket");
+
+  socket.emit("init", socket.id);
+
+  socket.on("signal", (data) => {
+      console.log("Signal reçu :", data);
+      socket.broadcast.emit("signal", data);
   });
 
-  socket.on("message", (message: string) => {
-    logger.info({
-      message: `Message reveived from ${socket.id} : ${message}`,
-      context: "app.ts"
-    });
+  socket.on("disconnect", () => {
+      console.log("Déconnexion WebSocket");
   });
 });
 
