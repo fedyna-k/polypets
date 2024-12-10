@@ -89,7 +89,7 @@ io.on("connection", (socket: Socket) => {
   socket.emit("init", socket.id);
 
   socket.on("signal", (data) => {
-      console.log("Signal reçu :", data);
+      // console.log("Signal reçu :", data);
       socket.broadcast.emit("signal", data);
   });
 
