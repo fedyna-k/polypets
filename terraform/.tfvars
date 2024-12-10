@@ -1,2 +1,2 @@
 subnet-region   = "us-east1"
-instance-region = "us-east1-a"
+instance-region = "us-east1-b"
