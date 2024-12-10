@@ -44,6 +44,10 @@ app.get("/", (_, res) => {
   res.render("index");
 });
 
+app.get("/view/:view", (req, res) => {
+  res.render(`./partials/${req.params.view}`);
+});
+
 app.get("/three", (_, res) => {
   res.render("three");
 });
