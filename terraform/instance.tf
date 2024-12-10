@@ -4,8 +4,8 @@ variable "instance-region" {
   description = "The Instance region, us-east1 is recommanded as it is the nearest"
 
   validation {
-    condition     = can(regex("^us-(east|west|central)1-a$", var.instance-region))
-    error_message = "Subnet region must be in US1-a, may it be east central or west"
+    condition     = can(regex("^us-(east|west|central)1-b$", var.instance-region))
+    error_message = "Subnet region must be in US1-b, may it be east central or west"
   }
 }
 
