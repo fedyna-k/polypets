@@ -1,6 +1,6 @@
 # 🐗 PolyPets 🐗
 
-[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/) [![GitHub issues](https://img.shields.io/github/issues/fedyna-k/polypets.svg?style=flat)]() [![GitHub PR](https://img.shields.io/github/issues-pr/fedyna-k/polypets.svg?style=flat)]() [![GitHub contributors](https://img.shields.io/github/contributors/fedyna-k/polypets.svg?style=flat)]()
+[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/) [![GitHub issues](https://img.shields.io/github/issues/fedyna-k/polypets.svg?style=flat)]() [![GitHub PR](https://img.shields.io/github/issues-pr/fedyna-k/polypets.svg?style=flat)]() [![GitHub contributors](https://img.shields.io/github/contributors/fedyna-k/polypets.svg?style=flat)]() [![Terraform](https://github.com/fedyna-k/polypets/actions/workflows/terraform.yml/badge.svg)](https://github.com/fedyna-k/polypets/actions/workflows/terraform.yml)
 
 > [!WARNING]
 > The game is still in development stage
