@@ -1,19 +1,22 @@
 import { Food } from "./food.js";
+import { PetIDs } from "./enums.js";
+import {PetData} from "./pet-data.js";
+import {GameData} from "./game-data.js";
 
 /**
- * Class representation of a PolyPet.
+ * Class representation of a PolyPet Instance.
  */
 export class Pet {
-  constructor(
-    public species: string,
-    private base_life: number,
-    private base_damage: number,
-    private food: Food[] = [],
-    private life: number = base_life,
-    private damage: number = base_damage
-  ) {
-    this.life = this.base_life;
-    this.damage = this.base_damage;
+
+  public petData: PetData;
+  private life: number = 0;
+  private damage: number = 0;
+  public max_life : number = 0;
+  public max_damage: number = 0;
+  private food: Food[] = [];
+
+  constructor(public species: PetIDs) {
+    this.petData = GameData.petData[species];
   }
 
   /**
@@ -27,7 +30,7 @@ export class Pet {
    * Set the total life of the Polypet with buffs applied
    */
   set totalLife(value: number) {
-    this.life = Math.max(0, value);
+    this.life = Math.min(Math.max(0, value), this.max_life);
   }
 
   /**
@@ -40,7 +43,7 @@ export class Pet {
   /**
    * Check if the PolyPet has 0 HP
    */
-  get isFainted(): boolean {
+  get isDead(): boolean {
     return this.totalLife <= 0;
   }
 
@@ -85,13 +88,13 @@ export class Pet {
    */
   applyFoodBuffs(): void {
     // Resets the life and damage to the base values
-    this.life = this.base_life;
-    this.damage = this.base_damage;
+    this.life = this.petData.base_life;
+    this.damage = this.petData.base_damage;
 
     // Apply each buff
     this.food.forEach((item: Food): void => {
-      this.life += item.life_buff;
-      this.damage += item.damage_buff;
+      this.life += item.life;
+      this.damage += item.damage;
     });
 
     console.log(
