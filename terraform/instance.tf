@@ -1,6 +1,6 @@
 variable "instance-region" {
   type        = string
-  default     = "us-east1-a"
+  default     = "us-east1-b"
   description = "The Instance region, us-east1 is recommanded as it is the nearest"
 
   validation {
