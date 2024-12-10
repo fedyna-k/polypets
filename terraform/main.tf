@@ -1,8 +1,8 @@
 terraform {
-    backend "gcs" { 
-      bucket  = "terraform-state-polypets"
-      prefix  = "prod"
-    }
+  backend "gcs" {
+    bucket = "terraform-state-polypets"
+    prefix = "prod"
+  }
 }
 
 provider "google" {
@@ -12,5 +12,5 @@ provider "google" {
 }
 
 output "server" {
-  value = join("", [ "https://", google_compute_instance.default.network_interface.0.access_config.0.nat_ip ])
+  value = join("", ["https://", google_compute_instance.default.network_interface.0.access_config.0.nat_ip])
 }

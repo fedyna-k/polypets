@@ -13,7 +13,7 @@ resource "google_compute_instance" "default" {
   name         = "polypets-vm"
   machine_type = "e2-micro"
   zone         = var.instance-region
-  
+
   boot_disk {
     initialize_params {
       image = "cos-cloud/cos-117-lts"
