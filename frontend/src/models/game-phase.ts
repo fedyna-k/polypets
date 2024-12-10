@@ -4,8 +4,12 @@
 export interface GamePhase {
     game_id: string;
     id: string;
-    state: string;
-    start_time: string;
+    // State of the phase : "in_progress" or "finished"
+    state: PhaseState;
+    start_time: Date;
+}
 
-    Serialize(): string;
+export enum PhaseState {
+    InProgress,
+    Finished
 }
