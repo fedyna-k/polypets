@@ -8,6 +8,8 @@ import {GameData} from "./game-data.js";
  */
 export class ShopPhase implements GamePhase {
 
+    private petPrice : number = 1;
+
     // State of the phase : "in_progress" or "finished"
     public state: PhaseState = PhaseState.InProgress;
     public pets: Pet[] = [];
@@ -22,12 +24,35 @@ export class ShopPhase implements GamePhase {
         public money: number,
         public available_pets: Record<PetIDs, number>,
         public available_food: Record<FoodIDs, number>
-    ) {}
+    ) {
+        // Initialize the table with 'None' pets
+        this.pets = [
+            new Pet(PetIDs.None),
+            new Pet(PetIDs.None),
+            new Pet(PetIDs.None),
+            new Pet(PetIDs.None),
+            new Pet(PetIDs.None)
+        ];
+        // Initialize the food with 'None' food
+        this.food = [
+            FoodIDs.None,
+            FoodIDs.None,
+            FoodIDs.None,
+            FoodIDs.None,
+            FoodIDs.None
+        ];
+    }
 
+    /**
+     * Get the start time of the shop phase
+     */
     getStartTime() : Date {
         return this.start_time;
     }
 
+    /**
+     * Checks if the shop phase should end server-wise
+     */
     checkEndPhase() : boolean {
         return this.start_time.getTime() + this.available_time > Date.now();
     }
@@ -51,9 +76,14 @@ export class ShopPhase implements GamePhase {
      * @param petIndex Index of the pet in the table
      */
     sellPet(petIndex : number) : boolean {
-        // TODO Implement the sell function
-        console.log(petIndex);
-        return true;
+        if (this.pets[petIndex] != null) {
+            this.money += this.petPrice;
+            this.pets[petIndex] = new Pet(PetIDs.None);
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     /**
