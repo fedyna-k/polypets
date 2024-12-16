@@ -21,7 +21,7 @@ export class BattlePhase implements GamePhase {
     // State of the phase : "in_progress" or "finished"
     public state: PhaseState = PhaseState.InProgress;
     // Start date of the battle
-    public start_time: Date = new Date();
+    public start_time: number;
     // Number of turns the battle lasted
     public turn_count: number = 0;
     // History of the events occurred during the battle
@@ -48,12 +48,12 @@ export class BattlePhase implements GamePhase {
     ) {
         this.state = PhaseState.InProgress;
         this.turn_count = 0;
+        this.start_time = Date.now();
     }
 
     Setup(id: string, shop1 : ShopPhase, shop2 : ShopPhase) : void {
         // Verification of the consistency of both game ids
-        if (shop1.game_id == this.game_id && shop1.game_id == shop2.game_id) { /* empty */ }
-        else {
+        if (!(shop1.game_id == this.game_id && shop1.game_id == shop2.game_id)) {
             throw new Error(`invalid game id between both shop instances`);
         }
 

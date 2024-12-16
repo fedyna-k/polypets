@@ -10,6 +10,8 @@ export class ShopPhase implements GamePhase {
 
     private petPrice : number = 1;
 
+    public start_time: number;
+
     // State of the phase : "in_progress" or "finished"
     public state: PhaseState = PhaseState.InProgress;
     public pets: Pet[] = [];
@@ -18,7 +20,6 @@ export class ShopPhase implements GamePhase {
     constructor(
         public game_id: string,
         public id: string,
-        public start_time: Date,
         public available_time : number,
         public player_id: string,
         public money: number,
@@ -41,12 +42,14 @@ export class ShopPhase implements GamePhase {
             FoodIDs.None,
             FoodIDs.None
         ];
+
+        this.start_time = Date.now();
     }
 
     /**
      * Get the start time of the shop phase
      */
-    getStartTime() : Date {
+    getStartTime() : number {
         return this.start_time;
     }
 
@@ -54,7 +57,7 @@ export class ShopPhase implements GamePhase {
      * Checks if the shop phase should end server-wise
      */
     checkEndPhase() : boolean {
-        return this.start_time.getTime() + this.available_time > Date.now();
+        return this.start_time + this.available_time > Date.now();
     }
 
     /**
