@@ -1,8 +1,8 @@
 /* global io */
 const socket = io();
 
-const FRAMES_PER_SECONDS = 30;
-const REFRESH_RATE = 1/FRAMES_PER_SECONDS;
+const FRAMES_PER_SECONDS = 4;
+const REFRESH_RATE = (1/FRAMES_PER_SECONDS) * 1000;
 
 const remoteVideo = document.getElementById("remoteVideo");
 const frameCanvas = document.getElementById("frameCanvas");
@@ -59,7 +59,10 @@ function captureFrame() {
         frameCanvas.height = remoteVideo.videoHeight;
         ctx.drawImage(remoteVideo, 0, 0, remoteVideo.videoWidth, remoteVideo.videoHeight);
         const imageData = ctx.getImageData(0, 0, remoteVideo.videoWidth, remoteVideo.videoHeight);
-        console.log(imgProc.analyseImage(imageData));
+        imgProc.analyseImage(imageData);
+    }
+    else {
+        clearInterval();
     }
 }
 
