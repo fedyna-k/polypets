@@ -86,6 +86,10 @@ export class Pet {
     return true;
   }
 
+  clearFood() : void {
+    this.food = [];
+  }
+
   /**
    * Apply the buffs of all the food to life and damage
    */

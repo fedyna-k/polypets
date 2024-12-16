@@ -1,6 +1,7 @@
 import {GamePhase, PhaseState} from "./game-phase.js";
 import {Pet} from "./pet.js";
 import {FoodIDs, PetIDs} from "./enums.js";
+import {GameData} from "./game-data.js";
 
 /**
  * Shop phase class of the game. Individual phase.
@@ -67,5 +68,24 @@ export class ShopPhase implements GamePhase {
         }
 
         return false;
+    }
+
+    /**
+     * Update the buff of all pets on the board (mostly for display)
+     */
+    updateFoodBuffs() {
+        let i : number = 0;
+        this.pets.forEach((p : Pet) => {
+            if (p != null) {
+                p.clearFood();
+
+                const foodItem = this.food[i];
+                if (foodItem !== null && foodItem !== undefined) {
+                    p.addFood(GameData.foodData[foodItem]);
+                }
+                p.applyFoodBuffs();
+                i++;
+            }
+        });
     }
 }
