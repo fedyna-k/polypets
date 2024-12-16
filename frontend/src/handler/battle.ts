@@ -31,6 +31,15 @@ function create(gameId: string) {
     return cacheValue;
 }
 
+function find(gameId: string) {
+    const params = {
+        category: "battle",
+        criteria: { gameId: gameId }
+    };
+
+    return Cache.find(params);
+}
+
 export default {
-    create
+    create, find
 };
