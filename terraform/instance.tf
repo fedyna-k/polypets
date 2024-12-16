@@ -26,7 +26,7 @@ resource "google_compute_instance" "default" {
     subnetwork = google_compute_subnetwork.default.id
 
     access_config {
-      public_ptr_domain_name = "app.fedyna.fr."
+      public_ptr_domain_name = "app.fedyna.fr"
     }
   }
 }
