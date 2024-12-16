@@ -11,7 +11,7 @@ variable "instance-region" {
 
 resource "google_compute_address" "static_ip" {
   name   = "polypets-static-ip"
-  region = var.instance-region
+  region = var.subnet-region
 }
 
 resource "google_compute_instance" "default" {
