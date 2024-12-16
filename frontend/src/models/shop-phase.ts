@@ -81,9 +81,8 @@ export class ShopPhase implements GamePhase {
             this.pets[petIndex] = new Pet(PetIDs.None);
             return true;
         }
-        else {
-            return false;
-        }
+
+        return false;
     }
 
     /**
@@ -103,7 +102,7 @@ export class ShopPhase implements GamePhase {
     /**
      * Update the buff of all pets on the board (mostly for display)
      */
-    updateFoodBuffs() {
+    updateFoodBuffs() : Pet[] {
         let i : number = 0;
         this.pets.forEach((p : Pet) => {
             if (p != null) {
@@ -117,5 +116,7 @@ export class ShopPhase implements GamePhase {
                 i++;
             }
         });
+
+        return this.pets;
     }
 }
