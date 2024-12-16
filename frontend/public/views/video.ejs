@@ -8,8 +8,11 @@
 <body>
     <h1>PC - Vue Vidéo</h1>
     <div id="socket-num"></div>
-    <video id="remoteVideo" autoplay playsinline style="width: 80%;"></video>
+    <video id="remoteVideo" autoplay playsinline style="width: 80%; display: none;"></video>
     <canvas id="frameCanvas" style="display: block; margin-top: 20px; border: 1px solid black;"></canvas>
+
+    <script src="../static/script/opencv/ImageProcessor.js"></script>
+    <script async src="../static/resources/opencv/opencv.js" onload="onCvReady()"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="../static/script/video/video.js"></script>
 </body>

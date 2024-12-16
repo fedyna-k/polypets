@@ -1,9 +1,13 @@
 /* global io */
 const socket = io();
 
+const FRAMES_PER_SECONDS = 30;
+const REFRESH_RATE = 1/FRAMES_PER_SECONDS;
+
 const remoteVideo = document.getElementById("remoteVideo");
 const frameCanvas = document.getElementById("frameCanvas");
 const ctx = frameCanvas.getContext("2d");
+const imgProc = new ImageProcessor();
 
 const servers = {
     iceServers: [
@@ -54,7 +58,17 @@ function captureFrame() {
         frameCanvas.width = remoteVideo.videoWidth;
         frameCanvas.height = remoteVideo.videoHeight;
         ctx.drawImage(remoteVideo, 0, 0, remoteVideo.videoWidth, remoteVideo.videoHeight);
+        const imageData = ctx.getImageData(0, 0, remoteVideo.videoWidth, remoteVideo.videoHeight);
+        console.log(imgProc.analyseImage(imageData));
     }
 }
 
-setInterval(captureFrame, 250);
+setInterval(captureFrame, REFRESH_RATE);
+
+function onCvReady(){
+    /* global cv */ 
+    cv.then((cv) => {       
+        imgProc.setCV(cv);
+        console.log("OpenCV set"); 
+    });
+}

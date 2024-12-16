@@ -23,12 +23,43 @@ class ImageProcessor {
         this.detector = new this.cv.aruco_ArucoDetector(this.dictionary, this.params, this.refinedParam);
     }
 
-    analyseImage(image) {
-        let markers_position = [];
-        let ids = [];
-        let rejected = [];
-        this.detector.detectMarkers(image, this.dictionary, markers_position, ids, rejected);
+    analyseImage(image){
+        const mat = this.cv.matFromImageData(image);
+        return this.analyseMat(mat);
+    }
+
+    analyseMat(mat) {
+        let gray = new this.cv.Mat();
+        this.cv.cvtColor(mat, gray, this.cv.COLOR_RGB2GRAY);
+        mat.delete();
+        
+        let markers_position = new this.cv.MatVector();
+        let ids = new this.cv.Mat();
+        let rejected = new this.cv.MatVector();
+
+        // Detection
+        this.detector.detectMarkers(gray, markers_position, ids, rejected);
+        gray.delete();
+        
+        // Put data in usable array
+        // let result = [];
+        // for (let i = 0; i < markers_position.size(); i++) {
+        //     let marker = markers_position.get(i); // Get marker position
+        //     let points = [];
+        //     for (let j = 0; j < marker.rows; j++) {
+        //         points.push([marker.data32F[j * 2], marker.data32F[j * 2 + 1]]); // Get data as int
+        //     }
+        //     result.push(points);
+        //     console.log(`Marker ${i + 1} :`, points);
+        //     marker.delete();
+        // }
+        
+        // Free memory
+        ids.delete();
+        markers_position.delete();
+        rejected.delete();
 
         return [markers_position, ids];
+        // return result;
     }
 }
