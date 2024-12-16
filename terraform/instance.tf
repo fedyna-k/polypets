@@ -10,8 +10,9 @@ variable "instance-region" {
 }
 
 resource "google_compute_address" "static_ip" {
-  name   = "polypets-static-ip"
-  region = var.subnet-region
+  name         = "polypets-static-ip"
+  region       = var.subnet-region
+  address_type = "EXTERNAL"
 }
 
 resource "google_compute_instance" "default" {
