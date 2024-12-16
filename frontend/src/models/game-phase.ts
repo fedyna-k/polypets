@@ -6,7 +6,7 @@ export interface GamePhase {
     id: string;
     // State of the phase : "in_progress" or "finished"
     state: PhaseState;
-    start_time: Date;
+    start_time: number;
 }
 
 export enum PhaseState {

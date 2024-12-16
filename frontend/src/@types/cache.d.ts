@@ -1,4 +1,4 @@
-declare type KeyValue = Record<string, string>;
+declare type KeyValue = Record<string, KeyValue | string>;
 declare type InnerCache = Record<string, KeyValue[]>;
 
 declare type CacheCreateParameters = {

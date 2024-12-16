@@ -1,11 +1,16 @@
 import {GamePhase, PhaseState} from "./game-phase.js";
 import {Pet} from "./pet.js";
 import {FoodIDs, PetIDs} from "./enums.js";
+import {GameData} from "./game-data.js";
 
 /**
  * Shop phase class of the game. Individual phase.
  */
 export class ShopPhase implements GamePhase {
+
+    private petPrice : number = 1;
+
+    public start_time: number;
 
     // State of the phase : "in_progress" or "finished"
     public state: PhaseState = PhaseState.InProgress;
@@ -15,20 +20,44 @@ export class ShopPhase implements GamePhase {
     constructor(
         public game_id: string,
         public id: string,
-        public start_time: Date,
         public available_time : number,
         public player_id: string,
         public money: number,
         public available_pets: Record<PetIDs, number>,
         public available_food: Record<FoodIDs, number>
-    ) {}
+    ) {
+        // Initialize the table with 'None' pets
+        this.pets = [
+            new Pet(PetIDs.None),
+            new Pet(PetIDs.None),
+            new Pet(PetIDs.None),
+            new Pet(PetIDs.None),
+            new Pet(PetIDs.None)
+        ];
+        // Initialize the food with 'None' food
+        this.food = [
+            FoodIDs.None,
+            FoodIDs.None,
+            FoodIDs.None,
+            FoodIDs.None,
+            FoodIDs.None
+        ];
 
-    getStartTime() : Date {
+        this.start_time = Date.now();
+    }
+
+    /**
+     * Get the start time of the shop phase
+     */
+    getStartTime() : number {
         return this.start_time;
     }
 
+    /**
+     * Checks if the shop phase should end server-wise
+     */
     checkEndPhase() : boolean {
-        return this.start_time.getTime() + this.available_time > Date.now();
+        return this.start_time + this.available_time > Date.now();
     }
 
     /**
@@ -50,9 +79,13 @@ export class ShopPhase implements GamePhase {
      * @param petIndex Index of the pet in the table
      */
     sellPet(petIndex : number) : boolean {
-        // TODO Implement the sell function
-        console.log(petIndex);
-        return true;
+        if (this.pets[petIndex] != null) {
+            this.money += this.petPrice;
+            this.pets[petIndex] = new Pet(PetIDs.None);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -67,5 +100,43 @@ export class ShopPhase implements GamePhase {
         }
 
         return false;
+    }
+
+    /**
+     * Update the buff of all pets on the board (mostly for display)
+     */
+    updateFoodBuffs() : Pet[] {
+        let i : number = 0;
+        this.pets.forEach((p : Pet) => {
+            if (p != null) {
+                p.clearFood();
+
+                const foodItem = this.food[i];
+                if (foodItem !== null && foodItem !== undefined) {
+                    p.addFood(GameData.foodData[foodItem]);
+                }
+                p.applyFoodBuffs();
+                i++;
+            }
+        });
+
+        return this.pets;
+    }
+
+    /**
+     *  Get the battle-ready team from the Polypet shop
+     */
+    GetTeamCompacted(): Pet[] {
+        // Filter out null elements or elements with species None
+        const validPets : Pet[] = this.pets.filter(
+            (pet : Pet): pet is Pet => (pet !== null && pet.species !== PetIDs.None)
+        );
+
+        // Ensure the resulting array has a length of 5 by filling with "None" pets
+        while (validPets.length < 5) {
+            validPets.push(new Pet(PetIDs.None));
+        }
+
+        return validPets;
     }
 }
