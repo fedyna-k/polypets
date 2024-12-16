@@ -12,7 +12,6 @@ export class Pet {
   private life: number = 0;
   private damage: number = 0;
   public max_life : number = 0;
-  public max_damage: number = 0;
   private food: Food[] = [];
 
   constructor(public species: PetIDs) {
@@ -37,7 +36,7 @@ export class Pet {
   }
 
   /**
-   * Get the attack damage of the PolyPet with buffs applied.
+   * Get the attack damage attribute of the PolyPet with buffs applied.
    */
   get totalDamage(): number {
     return this.damage;
@@ -62,8 +61,7 @@ export class Pet {
     }
 
     this.food.push(food);
-    console.log(`Food ${food.food_type} added.`);
-    this.applyFoodBuffs();  // Update buffed life and damage
+    console.log(`Food ${food.food_type.toString()} added.`);
     return true;
   }
 
@@ -112,9 +110,11 @@ export class Pet {
   /**
    * Applies the damage to the PolyPet.
    * HP can't be negative.
-   * @param damage : amount of damage taken
+   * @param damage - positive amount of damage taken
    */
   applyDamage(damage: number): void {
-    this.totalLife = this.life - damage;
+    if (damage > 0) {
+      this.totalLife = this.life - damage;
+    }
   }
 }
