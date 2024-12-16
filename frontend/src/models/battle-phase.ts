@@ -1,6 +1,7 @@
 import {BattleTurnLog} from "./battle-turn-log.js";
 import {GamePhase, PhaseState} from "./game-phase.js";
 import {Pet} from "./pet.js";
+import {ShopPhase} from "./shop-phase.js";
 
 enum BattleState {
     Win,
@@ -48,6 +49,22 @@ export class BattlePhase implements GamePhase {
         this.state = PhaseState.InProgress;
         this.turn_count = 0;
     }
+
+    Setup(id: string, shop1 : ShopPhase, shop2 : ShopPhase) : void {
+        // Verification of the consistency of both game ids
+        if (shop1.game_id == this.game_id && shop1.game_id == shop2.game_id) { /* empty */ }
+        else {
+            throw new Error(`invalid game id between both shop instances`);
+        }
+
+        this.id = id;
+        this.team0 = shop1.GetTeamCompacted();
+        this.team1 = shop2.GetTeamCompacted();
+
+        this.state = PhaseState.InProgress;
+        this.turn_count = 0;
+    }
+
     /**
      * Set up the battle and check the integrity of the data
      */

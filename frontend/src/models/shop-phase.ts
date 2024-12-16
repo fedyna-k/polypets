@@ -119,4 +119,21 @@ export class ShopPhase implements GamePhase {
 
         return this.pets;
     }
+
+    /**
+     *  Get the battle-ready team from the Polypet shop
+     */
+    GetTeamCompacted(): Pet[] {
+        // Filter out null elements or elements with species None
+        const validPets : Pet[] = this.pets.filter(
+            (pet : Pet): pet is Pet => (pet !== null && pet.species !== PetIDs.None)
+        );
+
+        // Ensure the resulting array has a length of 5 by filling with "None" pets
+        while (validPets.length < 5) {
+            validPets.push(new Pet(PetIDs.None));
+        }
+
+        return validPets;
+    }
 }
