@@ -9,6 +9,11 @@ variable "instance-region" {
   }
 }
 
+resource "google_compute_address" "static_ip" {
+  name   = "polypets-static-ip"
+  region = var.instance-region
+}
+
 resource "google_compute_instance" "default" {
   name         = "polypets-vm"
   machine_type = "e2-micro"
@@ -26,6 +31,7 @@ resource "google_compute_instance" "default" {
     subnetwork = google_compute_subnetwork.default.id
 
     access_config {
+      nat_ip                 = google_compute_address.static_ip.address
       public_ptr_domain_name = "app.fedyna.fr"
     }
   }
