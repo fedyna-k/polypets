@@ -115,4 +115,17 @@ export default class Cache {
 
     $instance[params.category] = $instance[params.category]!.filter(value => !areRecordsEqual(value, params.value));
   }
+
+  /**
+   * Removes all matching values from the cache.
+   * @param params The category and criteria object.
+   */
+  static findRemove(params: CacheReadParameters): void {
+    if ($instance[params.category] == undefined) {
+      throw new Error(`Category "${params.category}" doesn't exist in cache.`);
+    }
+
+    const criteriaKeys = Object.keys(params.criteria);
+    $instance[params.category] = $instance[params.category]!.filter(value => !criteriaKeys.every(key => params.criteria[key] == value[key]));
+  }
 }
