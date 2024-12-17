@@ -41,6 +41,13 @@ pc.onicecandidate = (event) => {
 // Event listener for initiation of socket connection
 socket.on("init", (number) => {
     console.log(number);
+    
+    const qrCodeContainer = document.getElementById("qrcode");
+    qrCodeContainer.innerHTML = "";
+
+    new QRCode(qrCodeContainer, {
+        text: number.toString()
+    });
 });
 
 // Event listener on the socket for a signal
