@@ -3,17 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/style/global.css">
     <title>Document</title>
 </head>
 <body>
-    <h1>PC - Vue Vidéo</h1>
-    <div id="socket-num"></div>
     <video id="remoteVideo" autoplay playsinline style="width: 80%; display: none;"></video>
     <canvas id="frameCanvas" style="display: block; margin-top: 20px; border: 1px solid black;"></canvas>
 
+    <!-- Import openCV -->
     <script src="../static/script/opencv/ImageProcessor.js"></script>
+    <!-- Load openCV -->
     <script async src="../static/resources/opencv/opencv.js" onload="onCvReady()"></script>
+    
+    <!-- Import socketio -->
     <script src="/socket.io/socket.io.js"></script>
+    
+    <!-- Connection to phone + image analysis script -->
     <script src="../static/script/video/video.js"></script>
+    
 </body>
 </html>

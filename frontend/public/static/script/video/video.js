@@ -1,13 +1,15 @@
 /* global io */
-const socket = io();
+const socket = io(); // websocket
+/* global ImageProcessor */
+const imgProc = new ImageProcessor();
 
-const FRAMES_PER_SECONDS = 4;
+const FRAMES_PER_SECONDS = 30;
 const REFRESH_RATE = (1/FRAMES_PER_SECONDS) * 1000;
 
-const remoteVideo = document.getElementById("remoteVideo");
-const frameCanvas = document.getElementById("frameCanvas");
-const ctx = frameCanvas.getContext("2d");
-const imgProc = new ImageProcessor();
+const remoteVideo = document.getElementById("remoteVideo"); // video HTML element
+const frameCanvas = document.getElementById("frameCanvas"); // Canva HTML element
+const ctx = frameCanvas.getContext("2d"); // JS Canva
+
 
 const servers = {
     iceServers: [
@@ -15,24 +17,33 @@ const servers = {
     ]
 };
 
-const pc = new RTCPeerConnection(servers);
+const pc = new RTCPeerConnection(servers); // Peer Connection
 
+
+
+// ===========================================================================================
+// EVENT LISTENERS
+// ===========================================================================================
+
+// Event listener for the video track
 pc.ontrack = (event) => {
     console.log("Received remote stream:", event.streams[0]);
     remoteVideo.srcObject = event.streams[0];
 };
 
+// Event listener for ICE candidates
 pc.onicecandidate = (event) => {
     if (event.candidate) {
         socket.emit("signal", { candidate: event.candidate });
     }
 };
 
-
+// Event listener for initiation of socket connection
 socket.on("init", (number) => {
-    document.getElementById("socket-num").innerHTML = number;
+    console.log(number);
 });
 
+// Event listener on the socket for a signal
 socket.on("signal", async (data) => {
     if (data.offer) {
         await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
@@ -46,6 +57,7 @@ socket.on("signal", async (data) => {
     }
 });
 
+// Event listener for the full WebRTC Connection
 pc.addEventListener("connectionstatechange", () => {
     if (pc.connectionState === "connected") {
         console.log("WebRTC Connecté");
@@ -53,21 +65,37 @@ pc.addEventListener("connectionstatechange", () => {
 });
 
 
+
+// ===========================================================================================
+// EVENT LISTENERS
+// ===========================================================================================
+
+/**
+ * When called, gets the current frame and analyses it
+ */
 function captureFrame() {
     if (remoteVideo.videoWidth && remoteVideo.videoHeight) {
         frameCanvas.width = remoteVideo.videoWidth;
         frameCanvas.height = remoteVideo.videoHeight;
+
+        // Draw frame on canva
         ctx.drawImage(remoteVideo, 0, 0, remoteVideo.videoWidth, remoteVideo.videoHeight);
+
+        // Extract frame
         const imageData = ctx.getImageData(0, 0, remoteVideo.videoWidth, remoteVideo.videoHeight);
-        imgProc.analyseImage(imageData);
+
+        imgProc.analyseImage(imageData); // Here we have the homography matrix :)
     }
     else {
         clearInterval();
     }
 }
 
-setInterval(captureFrame, REFRESH_RATE);
-
+/**
+ * Gives the openCV object to the image processor
+ * OpenCV needs to be imported before ! (ex: <script async src="../static/resources/opencv/opencv.js" onload="onCvReady()"></script>)
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function onCvReady(){
     /* global cv */ 
     cv.then((cv) => {       
@@ -75,3 +103,12 @@ function onCvReady(){
         console.log("OpenCV set"); 
     });
 }
+
+
+
+// ===========================================================================================
+// CALLS
+// ===========================================================================================
+
+// Analyse a frame every REFRESH_RATE seconds
+setInterval(captureFrame, REFRESH_RATE);
