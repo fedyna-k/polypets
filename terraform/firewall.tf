@@ -11,6 +11,20 @@ resource "google_compute_firewall" "https" {
   source_ranges = ["0.0.0.0/0"]
 }
 
+resource "google_compute_firewall" "https" {
+  name = "allow-https-egress"
+
+  allow {
+    ports    = ["80", "443"]
+    protocol = "tcp"
+  }
+
+  direction     = "EGRESS"
+  network       = google_compute_network.vpc_network.id
+  source_ranges = ["0.0.0.0/0"]
+}
+
+
 resource "google_compute_firewall" "ssh" {
   name = "allow-ssh"
 

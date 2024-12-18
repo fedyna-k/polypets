@@ -9,6 +9,14 @@ variable "instance-region" {
   }
 }
 
+variable "ssh_key" {
+  type = string
+}
+
+variable "gce_ssh_user" {
+  type = string
+}
+
 resource "google_compute_address" "static_ip" {
   name         = "polypets-static-ip"
   region       = var.subnet-region
@@ -26,7 +34,11 @@ resource "google_compute_instance" "default" {
     }
   }
 
-  metadata_startup_script = "git clone https://github.com/fedyna-k/polypets && cd polypets && docker compose up --build"
+  metadata = {
+    "ssh-key" = "${var.gce_ssh_user}:${var.ssh_key}"
+  }
+
+  metadata_startup_script = ""
 
   network_interface {
     subnetwork = google_compute_subnetwork.default.id
