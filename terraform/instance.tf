@@ -26,7 +26,7 @@ resource "google_compute_instance" "default" {
     }
   }
 
-  metadata_startup_script = ""
+  metadata_startup_script = "git clone https://github.com/fedyna-k/polypets && cd polypets && docker compose up --build"
 
   network_interface {
     subnetwork = google_compute_subnetwork.default.id

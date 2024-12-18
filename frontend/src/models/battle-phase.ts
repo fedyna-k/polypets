@@ -1,10 +1,17 @@
 import {BattleTurnLog} from "./battle-turn-log.js";
 import {GamePhase, PhaseState} from "./game-phase.js";
 import {Pet} from "./pet.js";
+import {ShopPhase} from "./shop-phase.js";
 
 enum BattleState {
     Win,
     Draw
+}
+
+enum Winner {
+    Draw = -1,
+    Player1,
+    Player2
 }
 
 /**
@@ -13,23 +20,25 @@ enum BattleState {
 export class BattlePhase implements GamePhase {
     // State of the phase : "in_progress" or "finished"
     public state: PhaseState = PhaseState.InProgress;
+    // Start date of the battle
+    public start_time: number;
     // Number of turns the battle lasted
     public turn_count: number = 0;
     // History of the events occurred during the battle
     public history: BattleTurnLog[] = [];
     // State of the battle : "win" or "draw"
-    public battle_state: BattleState = BattleState.Draw;
-    // Current index for each team
+    public battle_result: BattleState = BattleState.Draw;
+    // Current active Pet index for each team
     public team0_index : number = 0;
     public team1_index : number = 0;
+    // Index of the winner after the simulation
+    public winnerIndex: Winner = Winner.Draw;
 
     constructor(
         // Identifier of the game
         public game_id: string,
         // Identifier of the battle
         public id: string,
-        // Start date of the battle
-        public start_time: Date,
         // Max number of turns the battle can last
         public max_turn_count: number = 999,
         // Team of the first player
@@ -39,12 +48,34 @@ export class BattlePhase implements GamePhase {
     ) {
         this.state = PhaseState.InProgress;
         this.turn_count = 0;
+        this.start_time = Date.now();
     }
+
+    Setup(id: string, shop1 : ShopPhase, shop2 : ShopPhase) : void {
+        // Verification of the consistency of both game ids
+        if (!(shop1.game_id == this.game_id && shop1.game_id == shop2.game_id)) {
+            throw new Error(`invalid game id between both shop instances`);
+        }
+
+        this.id = id;
+        this.team0 = shop1.GetTeamCompacted();
+        this.team1 = shop2.GetTeamCompacted();
+
+        this.state = PhaseState.InProgress;
+        this.turn_count = 0;
+    }
+
     /**
      * Set up the battle and check the integrity of the data
      */
     setup(): void {
-        // TODO Apply buff on each pet
+        this.team0.forEach((pet: Pet) => {
+            pet.applyFoodBuffs();
+        });
+
+        this.team1.forEach((pet: Pet) => {
+            pet.applyFoodBuffs();
+        });
     }
 
     /**
@@ -59,8 +90,10 @@ export class BattlePhase implements GamePhase {
 
     damagePhase(): void {
         // Team0 takes damage
+        console.log(`Applying damages for player1's ${this.team0[this.team0_index]!.species}`);
         this.team0[this.team0_index]!.totalLife -= this.calculateDamage(this.team1[this.team1_index]!);
         // Team1 takes damage
+        console.log(`Applying damages for player2's ${this.team1[this.team1_index]!.species}`);
         this.team1[this.team1_index]!.totalLife -= this.calculateDamage(this.team0[this.team0_index]!);
     }
 
@@ -91,14 +124,18 @@ export class BattlePhase implements GamePhase {
 
     }
 
-    simulate(): BattleTurnLog[] {
+    simulate() {
         do {
             this.history.push(this.resolveTurn());
             this.turn_count++;
         }
-        while (this.checkEndBattle());
+        while (!this.checkEndBattle());
+        this.end();
 
-        return this.history;
+        return {
+            result: this.battle_result,
+            winner: this.winnerIndex
+        };
     }
 
     /**
@@ -109,25 +146,29 @@ export class BattlePhase implements GamePhase {
         // Check if the battle has exceeded the maximum allowed duration
         if (this.turn_count >= this.max_turn_count) {
             this.state = PhaseState.Finished;
-            this.battle_state = BattleState.Draw;
+            this.battle_result = BattleState.Draw;
+            this.winnerIndex = -1;
             return true;
         }
         // Check if Team 2 wins
         if (this.countPetsAlive(this.team0) == 0 && this.countPetsAlive(this.team1) > 0) {
             this.state = PhaseState.Finished;
-            this.battle_state = BattleState.Win;
+            this.battle_result = BattleState.Win;
+            this.winnerIndex = 1;
             return true;
         }
         // Check if Team 1 wins
         else if (this.countPetsAlive(this.team1) == 0 && this.countPetsAlive(this.team0) > 0) {
             this.state = PhaseState.Finished;
-            this.battle_state = BattleState.Win;
+            this.battle_result = BattleState.Win;
+            this.winnerIndex = 0;
             return true;
         }
         // Check if both Team 1 and Team 2 are all fainted
         else if (this.countPetsAlive(this.team0) == 0 && this.countPetsAlive(this.team1) == 0) {
             this.state = PhaseState.Finished;
-            this.battle_state = BattleState.Draw;
+            this.battle_result = BattleState.Draw;
+            this.winnerIndex = -1;
             return true;
         }
 

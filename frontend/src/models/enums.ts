@@ -1,4 +1,5 @@
 export enum PetIDs {
+    None,
     Cow,
     Pig,
     Rat,
@@ -8,6 +9,7 @@ export enum PetIDs {
 }
 
 export enum FoodIDs {
+    None,
     Banana,
     Apple,
     Coconut,

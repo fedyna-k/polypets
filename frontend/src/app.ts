@@ -1,10 +1,16 @@
 import express from "express";
+import { Server, Socket } from "socket.io";
 import https from "https";
 import { readFileSync } from "fs";
 import GameRouter from "./router/game-router.js";
 import Cache from "./handler/cache.js";
 import logger from "./handler/logger.js";
 import { logRequest } from "./middleware/logging.js";
+import path from "path";
+import { fileURLToPath } from "url";
+import {GameData} from "./models/game-data.js";
+import BattleRouter from "./router/battle-router.js";
+import ShopRouter from "./router/shop-router.js";
 
 const port = 443;
 const app = express();
@@ -39,9 +45,18 @@ app.set("view engine", "ejs");
 app.set("views", "/app/public/views");
 
 app.use(logRequest());
+app.use(express.static(path.dirname(fileURLToPath(import.meta.url))));
 
 app.get("/", (_, res) => {
   res.render("index");
+});
+
+app.get("/video", (_, res) => {
+  res.render("video");
+});
+
+app.get("/phone", (_, res) => {
+  res.render("phone-video");
 });
 
 app.get("/view/:view", (req, res) => {
@@ -53,10 +68,51 @@ app.get("/three", (_, res) => {
 });
 
 app.use("/game", GameRouter);
+app.use("/battle", BattleRouter);
+app.use("/shop", ShopRouter);
 
 Cache.createCategory("game");
+Cache.createCategory("battle");
+Cache.createCategory("shop");
 
-https.createServer(options, app).listen(port, () => {
+GameData.initializeData();
+
+// Creating server
+const server = https.createServer(options, app);
+const io = new Server(server);
+
+// Managing Web Sockets
+// io.on("connection", (socket: Socket) => {
+//   logger.info({
+//     message: `User connection: ${socket.id}`,
+//     context: "app.ts"
+//   });
+
+//   socket.on("message", (message: string) => {
+//     logger.info({
+//       message: `Message reveived from ${socket.id} : ${message}`,
+//       context: "app.ts"
+//     });
+//   });
+// });
+
+io.on("connection", (socket: Socket) => {
+  console.log("Nouvelle connexion WebSocket");
+
+  socket.emit("init", socket.id);
+
+  socket.on("signal", (data) => {
+      // console.log("Signal reçu :", data);
+      socket.broadcast.emit("signal", data);
+  });
+
+  socket.on("disconnect", () => {
+      console.log("Déconnexion WebSocket");
+  });
+});
+
+// Launching server
+server.listen(port, () => {
   logger.info({
     message: `Application listening to port ${port}.`,
     context: "app.ts"
