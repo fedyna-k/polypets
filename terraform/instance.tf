@@ -35,7 +35,7 @@ resource "google_compute_instance" "default" {
   }
 
   metadata = {
-    "ssh-key" = "${var.gce_ssh_user}:${var.ssh_key}"
+    "ssh-keys" = "${var.gce_ssh_user}:${var.ssh_key}"
   }
 
   metadata_startup_script = ""
@@ -45,7 +45,7 @@ resource "google_compute_instance" "default" {
 
     access_config {
       nat_ip                 = google_compute_address.static_ip.address
-      public_ptr_domain_name = "app.fedyna.fr"
+      public_ptr_domain_name = "app.fedyna.fr."
     }
   }
 }
