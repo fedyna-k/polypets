@@ -11,7 +11,7 @@ variable "bucket-location" {
 
 
 resource "google_storage_bucket" "script_bucket" {
-  name          = "startup-script-bucket"
+  name          = "polypets-startup-script-bucket"
   location      = var.bucket-location
   storage_class = "STANDARD"
 
