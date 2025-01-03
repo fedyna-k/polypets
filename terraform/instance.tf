@@ -9,14 +9,6 @@ variable "instance-region" {
   }
 }
 
-variable "ssh_key" {
-  type = string
-}
-
-variable "gce_ssh_user" {
-  type = string
-}
-
 resource "google_compute_address" "static_ip" {
   name         = "polypets-static-ip"
   region       = var.subnet-region
