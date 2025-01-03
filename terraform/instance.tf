@@ -35,10 +35,8 @@ resource "google_compute_instance" "default" {
   }
 
   metadata = {
-    "ssh-keys" = "${var.gce_ssh_user}:${var.ssh_key}"
+    "startup-script-url" = join("/", [google_storage_bucket.script_bucket.url, google_storage_bucket_object.script.name])
   }
-
-  metadata_startup_script = ""
 
   network_interface {
     subnetwork = google_compute_subnetwork.default.id
