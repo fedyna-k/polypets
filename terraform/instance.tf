@@ -20,6 +20,12 @@ resource "google_compute_instance" "default" {
   machine_type = "e2-micro"
   zone         = var.instance-region
 
+  lifecycle {
+    replace_triggered_by = [
+      google_storage_bucket_object.script.detect_md5hash
+    ]
+  }
+
   boot_disk {
     initialize_params {
       image = "cos-cloud/cos-117-lts"
