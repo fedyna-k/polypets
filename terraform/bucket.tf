@@ -9,6 +9,16 @@ variable "bucket-location" {
   }
 }
 
+variable "code-version" {
+  type        = string
+  default     = "1.0.0"
+  description = "The app variable"
+
+  validation {
+    condition     = can(regex("^\\d+\\.\\d+\\.\\d+$", var.code-version))
+    error_message = "Version number should follow M.m.p SemVer numbering."
+  }
+}
 
 resource "google_storage_bucket" "script_bucket" {
   name          = "polypets-startup-script-bucket"
@@ -25,7 +35,7 @@ resource "google_storage_bucket_object" "script" {
   detect_md5hash = base64encode(md5(file("../startup.sh")))
 
   metadata = {
-    "version" = var.version
+    "version" = var.code-version
   }
 
   bucket = google_storage_bucket.script_bucket.id

@@ -9,17 +9,6 @@ variable "instance-region" {
   }
 }
 
-variable "version" {
-  type        = string
-  default     = "1.0.0"
-  description = "The app variable"
-
-  validation {
-    condition     = can(regex("^\\d+\\.\\d+\\.\\d+$", var.version))
-    error_message = "Version number should follow M.m.p SemVer numbering."
-  }
-}
-
 resource "google_compute_address" "static_ip" {
   name         = "polypets-static-ip"
   region       = var.subnet-region
@@ -45,8 +34,7 @@ resource "google_compute_instance" "default" {
   }
 
   metadata = {
-    "startup-script-url" = join("/", [google_storage_bucket.script_bucket.url, google_storage_bucket_object.script.name]),
-    "version"            = var.version
+    "startup-script-url" = join("/", [google_storage_bucket.script_bucket.url, google_storage_bucket_object.script.name])
   }
 
   network_interface {
