@@ -1,5 +1,3 @@
-
-
 # Check if git repo is already cloned
 if [ ! -d "./polypets" ]; then
   git clone https://github.com/fedyna-k/polypets
