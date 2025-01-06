@@ -24,5 +24,9 @@ resource "google_storage_bucket_object" "script" {
   content_type   = "text/plain"
   detect_md5hash = base64encode(md5(file("../startup.sh")))
 
+  metadata = {
+    "version" = var.version
+  }
+
   bucket = google_storage_bucket.script_bucket.id
 }
