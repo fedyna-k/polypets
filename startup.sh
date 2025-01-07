@@ -1,5 +1,3 @@
-#! /bin/bash
-
 /usr/bin/logger "===== ENTERING STARTUP SCRIPT ====="
 
 # Check if git repo is already cloned
