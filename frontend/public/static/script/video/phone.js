@@ -9,8 +9,9 @@ const servers = {
     ]
 };
 
-const pc = new RTCPeerConnection(servers);
-
+const pc = new RTCPeerConnection();
+let channel = pc.createDataChannel("focal_length");
+channel.onopen = () => {console.log("Opened");};
 
 pc.onicecandidate = (event) => {
     if (event.candidate) {
@@ -31,6 +32,8 @@ function openFile(file){
     reader.onload = function() {
         EXIF.getData(input.files[0], function() {
             focalLength = EXIF.getAllTags(this)["FocalLength"];
+            console.log(String(focalLength));
+            channel.send(String(focalLength));
         });
     };
     reader.readAsArrayBuffer(input.files[0]);
@@ -54,7 +57,7 @@ async function init(){
     });
 }
 
-// init();
+init();
 
 socket.on("signal", async (data) => {
     if (data.answer) {

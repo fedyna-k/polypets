@@ -6,6 +6,8 @@ const imgProc = new ImageProcessor();
 const FRAMES_PER_SECONDS = 30;
 const REFRESH_RATE = (1/FRAMES_PER_SECONDS) * 1000;
 
+let focal_length;
+
 const remoteVideo = document.getElementById("remoteVideo"); // video HTML element
 const frameCanvas = document.getElementById("frameCanvas"); // Canva HTML element
 const ctx = frameCanvas.getContext("2d"); // JS Canva
@@ -17,8 +19,16 @@ const servers = {
     ]
 };
 
-const pc = new RTCPeerConnection(servers); // Peer Connection
+const pc = new RTCPeerConnection(); // Peer Connection
+pc.ondatachannel = (event) => {
+    const channel = event.channel;
 
+    channel.onopen = () => {console.log("Opened");};
+
+    channel.onmessage = (event) => {
+        focal_length = event.data;
+    };
+};
 
 
 // ===========================================================================================
@@ -91,7 +101,7 @@ function captureFrame() {
         // Extract frame
         const imageData = ctx.getImageData(0, 0, remoteVideo.videoWidth, remoteVideo.videoHeight);
 
-        imgProc.analyseImage(imageData); // Here we have the homography matrix :)
+        // imgProc.analyseImage(imageData); // Here we have the homography matrix :)
     }
     else {
         clearInterval();
