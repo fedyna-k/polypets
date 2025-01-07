@@ -6,9 +6,16 @@
     <title>Phone View</title>
 </head>
 <body>
-    <h1>Téléphone - Vue Caméra</h1>
+    <h1>Veuillez nous fournir une image prise avec votre téléphone</h1>
+    <div>
+        Nous avons besoin d'obtenir des informations sur votre caméra. Pour cela, nous avons besoin d'une
+        image prise avec votre téléphone pour l'analyser. Cette image ne sera pas conservée.
+    </div>
+    <input type="file" id="image-input" accept="image/*" onchange="openFile(event)"><br>
+
     <video id="localVideo" autoplay playsinline style="width: 80%;"></video>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
     <script src="../static/script/video/phone.js"></script>
 </body>
 </html>
