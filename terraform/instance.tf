@@ -33,9 +33,11 @@ resource "google_compute_instance" "default" {
     }
   }
 
-  metadata = {
-    "startup-script-url" = join("/", [google_storage_bucket.script_bucket.url, google_storage_bucket_object.script.name])
-  }
+  metadata_startup_script = file("../startup.sh")
+
+  # metadata = {
+  #   "startup-script-url" = join("/", [google_storage_bucket.script_bucket.url, google_storage_bucket_object.script.name])
+  # }
 
   network_interface {
     subnetwork = google_compute_subnetwork.default.id
