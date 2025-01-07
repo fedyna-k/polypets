@@ -101,7 +101,11 @@ function captureFrame() {
         // Extract frame
         const imageData = ctx.getImageData(0, 0, remoteVideo.videoWidth, remoteVideo.videoHeight);
 
-        // imgProc.analyseImage(imageData); // Here we have the homography matrix :)
+        const homography_matrix = imgProc.analyseImage(imageData); // Here we have the homography matrix :)
+
+        const camera_matrix = imgProc.getIntrinsicCameraMatrix(focal_length, remoteVideo.videoWidth, remoteVideo.videoHeight);
+
+        
     }
     else {
         clearInterval();

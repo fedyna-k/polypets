@@ -110,4 +110,17 @@ class ImageProcessor {
         const H = this.cv.findHomography(this.cv.matFromArray(4, 2, this.cv.CV_64F, detected_corners.flat()), src_points, this.cv.RANSAC, 3, new this.cv.Mat());
         return H.data64F;
     }
+
+
+    getIntrinsicCameraMatrix(focal_length_35mm, width, height) {
+        // Get FOV and convert to degrees
+        const FOV = 2 * Math.atan(36/(2 * focal_length_35mm)) * 180 / Math.PI;
+
+        // Get fx and fy
+        const fx = Math.floor(width / (2 * Math.tan(FOV)));
+        const fy = Math.floor(height / (2 * Math.tan(FOV)));
+
+        // Get instrinsic camera matrix
+        const K = [[fx, 0, Math.floor(width / 2)], [0, fy, Math.floor(height / 2)], [0, 0, 1]];
+    }
 }

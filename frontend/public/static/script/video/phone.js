@@ -31,8 +31,7 @@ function openFile(file){
     let focalLength;
     reader.onload = function() {
         EXIF.getData(input.files[0], function() {
-            focalLength = EXIF.getAllTags(this)["FocalLength"];
-            console.log(String(focalLength));
+            focalLength = EXIF.getAllTags(this)["FocalLengthIn35mmFilm"];
             channel.send(String(focalLength));
         });
     };
