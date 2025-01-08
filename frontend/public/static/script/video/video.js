@@ -6,8 +6,10 @@ const imgProc = new ImageProcessor();
 const FRAMES_PER_SECONDS = 30;
 const REFRESH_RATE = (1/FRAMES_PER_SECONDS) * 1000;
 
+// Video parameters
 let focal_length;
 
+// Video Canva
 const remoteVideo = document.getElementById("remoteVideo"); // video HTML element
 const frameCanvas = document.getElementById("frameCanvas"); // Canva HTML element
 const ctx = frameCanvas.getContext("2d"); // JS Canva
@@ -27,6 +29,7 @@ pc.ondatachannel = (event) => {
 
     channel.onmessage = (event) => {
         focal_length = event.data;
+        imgProc.setIntrinsicCameraMatrix(focal_length, remoteVideo.videoWidth, remoteVideo.videoHeight);
     };
 };
 
@@ -91,7 +94,7 @@ pc.addEventListener("connectionstatechange", () => {
  * When called, gets the current frame and analyses it
  */
 function captureFrame() {
-    if (remoteVideo.videoWidth && remoteVideo.videoHeight) {
+    if (remoteVideo.videoWidth && remoteVideo.videoHeight && imgProc.isIntrinsicCameraSet()) {
         frameCanvas.width = remoteVideo.videoWidth;
         frameCanvas.height = remoteVideo.videoHeight;
 
@@ -101,9 +104,18 @@ function captureFrame() {
         // Extract frame
         const imageData = ctx.getImageData(0, 0, remoteVideo.videoWidth, remoteVideo.videoHeight);
 
-        const homography_matrix = imgProc.analyseImage(imageData); // Here we have the homography matrix :)
+        imgProc.setMat(imageData);
 
-        const camera_matrix = imgProc.getIntrinsicCameraMatrix(focal_length, remoteVideo.videoWidth, remoteVideo.videoHeight);
+        try {
+            const detected_corners = imgProc.detectCorners();
+
+            const homography_matrix = imgProc.homography(detected_corners); // Here we have the homography matrix :)
+
+            // const camera_matrix = imgProc.getIntrinsicCameraMatrix(focal_length, remoteVideo.videoWidth, remoteVideo.videoHeight);
+            console.log(imgProc.getIntrinsicMatrix());
+        } catch(error) {
+            // console.log(error);
+        }
 
         
     }

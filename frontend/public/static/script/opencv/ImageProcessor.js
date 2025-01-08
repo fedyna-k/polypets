@@ -35,6 +35,10 @@ class ImageProcessor {
         this.detector = new this.cv.aruco_ArucoDetector(this.dictionary, this.params, this.refinedParam);
     }
 
+    setMat(image) {
+        this.mat = this.cv.matFromImageData(image);
+    }
+
     /**
      * Processes an image to get the homography matrix to get the plane of the board.
      * If not all corners of the board are detected, prints an error and does not return anything.
@@ -57,10 +61,10 @@ class ImageProcessor {
      * @param {cv.Mat} mat A cv.Mat image
      * @returns [markers_position, ids] : The position of all aruco markers in the image with their associated id
      */
-    analyseMat(mat) {
+    analyseMat() {
         let gray = new this.cv.Mat();
-        this.cv.cvtColor(mat, gray, this.cv.COLOR_RGB2GRAY);
-        mat.delete();
+        this.cv.cvtColor(this.mat, gray, this.cv.COLOR_RGB2GRAY);
+        this.mat.delete();
         
         let markers_position = new this.cv.MatVector();
         let ids = new this.cv.Mat();
@@ -77,14 +81,8 @@ class ImageProcessor {
         return [markers_position, ids];
     }
 
-    /**
-     * Computes the homography matrix of an openCV image to get the plane of the board.
-     * @param {cv.Mat} mat A cv.Mat image
-     * @returns The homography matrix to get the plane of the board from the photo
-     * @throws An error when the aruco markers of the corners are not detected
-     */
-    homography(mat) {
-        let [markers_position, ids] = this.analyseMat(mat);
+    detectCorners() {
+        let [markers_position, ids] = this.analyseMat();
 
         let detected_corners = [0, 0, 0, 0];
         for (let i = 0; i < ids.size()["height"]; i++) {
@@ -101,26 +99,58 @@ class ImageProcessor {
             // --------------------------------------------------------------------------------
         }
 
-        const src_points = this.cv.matFromArray(4, 2, this.cv.CV_64F, [5, 5, 284, 5, 284, 197, 5, 197]);
-        
         if (detected_corners.some(corner => typeof corner == "number")) {
             throw new Error("Corners not detected properly");
         }
+
+        return detected_corners;
+    }
+
+    /**
+     * Computes the homography matrix of an openCV image to get the plane of the board.
+     * @param {cv.Mat} mat A cv.Mat image
+     * @returns The homography matrix to get the plane of the board from the photo
+     * @throws An error when the aruco markers of the corners are not detected
+     */
+    homography(detected_corners) {
+        const src_points = this.cv.matFromArray(4, 2, this.cv.CV_64F, [5, 5, 284, 5, 284, 197, 5, 197]);
+        
+        // if (detected_corners.some(corner => typeof corner == "number")) {
+        //     throw new Error("Corners not detected properly");
+        // }
         
         const H = this.cv.findHomography(this.cv.matFromArray(4, 2, this.cv.CV_64F, detected_corners.flat()), src_points, this.cv.RANSAC, 3, new this.cv.Mat());
         return H.data64F;
     }
 
 
-    getIntrinsicCameraMatrix(focal_length_35mm, width, height) {
+    setIntrinsicCameraMatrix(focal_length_35mm, width, height) {
+        console.log(focal_length_35mm, width, height);
         // Get FOV and convert to degrees
         const FOV = 2 * Math.atan(36/(2 * focal_length_35mm)) * 180 / Math.PI;
+        console.log(FOV);
 
         // Get fx and fy
         const fx = Math.floor(width / (2 * Math.tan(FOV)));
         const fy = Math.floor(height / (2 * Math.tan(FOV)));
+        console.log(fx, fy);
 
         // Get instrinsic camera matrix
-        const K = [[fx, 0, Math.floor(width / 2)], [0, fy, Math.floor(height / 2)], [0, 0, 1]];
+        this.K = [[fx, 0, Math.floor(width / 2)], [0, fy, Math.floor(height / 2)], [0, 0, 1]];
+    }
+
+    getIntrinsicMatrix() {
+        return this.K;
+    }
+
+    isIntrinsicCameraSet() {
+        return this.K != undefined;
+    }
+
+    getRotationAndTranslationMatrices(K, corners){
+        // A4 dimensions
+        const real_corners = [[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 0, 0]];
+
+        this.cv.solvePnp(corners, real_corners, K, null);
     }
 }
