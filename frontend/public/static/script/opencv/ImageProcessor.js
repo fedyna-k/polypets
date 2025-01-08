@@ -104,7 +104,7 @@ class ImageProcessor {
         const src_points = this.cv.matFromArray(4, 2, this.cv.CV_64F, [5, 5, 284, 5, 284, 197, 5, 197]);
         
         if (detected_corners.some(corner => typeof corner == "number")) {
-            throw new Error("Corners not detected properly");
+            //throw new Error("Corners not detected properly");
         }
         
         const H = this.cv.findHomography(this.cv.matFromArray(4, 2, this.cv.CV_64F, detected_corners.flat()), src_points, this.cv.RANSAC, 3, new this.cv.Mat());

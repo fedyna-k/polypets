@@ -55,8 +55,9 @@ app.get("/video", (_, res) => {
   res.render("video");
 });
 
-app.get("/phone", (_, res) => {
-  res.render("phone-video");
+app.get("/phone/:id", (req, res) => {
+  const roomId = req.params.id;
+  res.render("phone-video", { roomId }); 
 });
 
 app.get("/view/:view", (req, res) => {
@@ -81,20 +82,10 @@ GameData.initializeData();
 const server = https.createServer(options, app);
 const io = new Server(server);
 
-// Managing Web Sockets
-// io.on("connection", (socket: Socket) => {
-//   logger.info({
-//     message: `User connection: ${socket.id}`,
-//     context: "app.ts"
-//   });
 
-//   socket.on("message", (message: string) => {
-//     logger.info({
-//       message: `Message reveived from ${socket.id} : ${message}`,
-//       context: "app.ts"
-//     });
-//   });
-// });
+// Compteur de room
+//let roomCounter = 0; 
+
 
 io.on("connection", (socket: Socket) => {
   console.log("Nouvelle connexion WebSocket");

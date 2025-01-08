@@ -25,6 +25,11 @@ const pc = new RTCPeerConnection(servers); // Peer Connection
 // EVENT LISTENERS
 // ===========================================================================================
 
+// Ajout des listeners pour suivre les états de connexion ICE
+pc.addEventListener("iceconnectionstatechange", () => {
+    console.log("ICE Connection State (PC):", pc.iceConnectionState);
+});
+
 // Event listener for the video track
 pc.ontrack = (event) => {
     console.log("Received remote stream:", event.streams[0]);
@@ -34,6 +39,7 @@ pc.ontrack = (event) => {
 // Event listener for ICE candidates
 pc.onicecandidate = (event) => {
     if (event.candidate) {
+        console.log("Envoi du candidat ICE :", event.candidate);
         socket.emit("signal", { candidate: event.candidate });
     }
 };
@@ -52,20 +58,32 @@ socket.on("init", (number) => {
 
 // Event listener on the socket for a signal
 socket.on("signal", async (data) => {
+    console.log("Signal reçu côté PC :", data);
     if (data.offer) {
+        console.log("Offre reçue :", data.offer);
         await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+        console.log("Offre reçue et appliquée");
+
         const answer = await pc.createAnswer();
+        console.log("Envoi de la réponse :", answer);
         await pc.setLocalDescription(answer);
         socket.emit("signal", { answer });
+        console.log("Réponse envoyé :", answer);
+
     } else if (data.answer) {
+        console.log("Réponse reçue", data.answer);
         await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+        console.log("Réponse appliquée");
     } else if (data.candidate) {
+        console.log("Candidat ICE reçu", data.candidate);
         await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+        console.log("Candidat ICE ajouté", data.candidate);
     }
 });
 
 // Event listener for the full WebRTC Connection
 pc.addEventListener("connectionstatechange", () => {
+    console.log("PeerConnection State (PC):", pc.connectionState);
     if (pc.connectionState === "connected") {
         console.log("WebRTC Connecté");
     }
