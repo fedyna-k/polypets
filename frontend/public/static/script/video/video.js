@@ -109,12 +109,19 @@ function captureFrame() {
         try {
             const detected_corners = imgProc.detectCorners();
 
+            // Here we have the 4 corners or an error
+
+            console.log("Corners detected :)");
+
             const homography_matrix = imgProc.homography(detected_corners); // Here we have the homography matrix :)
 
-            // const camera_matrix = imgProc.getIntrinsicCameraMatrix(focal_length, remoteVideo.videoWidth, remoteVideo.videoHeight);
-            console.log(imgProc.getIntrinsicMatrix());
+            const projection_matrices = imgProc.getRotationAndTranslationMatrices(detected_corners);
+
         } catch(error) {
-            // console.log(error);
+            if (error.message != "Corners not detected properly")
+            {
+                console.log(error);
+            }
         }
 
         

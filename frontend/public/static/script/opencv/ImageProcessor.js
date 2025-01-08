@@ -3,7 +3,6 @@
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 class ImageProcessor {
-
     /**
      * 
      * @param {*} opencvObject The imported openCV object
@@ -125,32 +124,48 @@ class ImageProcessor {
 
 
     setIntrinsicCameraMatrix(focal_length_35mm, width, height) {
-        console.log(focal_length_35mm, width, height);
         // Get FOV and convert to degrees
         const FOV = 2 * Math.atan(36/(2 * focal_length_35mm)) * 180 / Math.PI;
-        console.log(FOV);
 
         // Get fx and fy
         const fx = Math.floor(width / (2 * Math.tan(FOV)));
         const fy = Math.floor(height / (2 * Math.tan(FOV)));
-        console.log(fx, fy);
 
         // Get instrinsic camera matrix
-        this.K = [[fx, 0, Math.floor(width / 2)], [0, fy, Math.floor(height / 2)], [0, 0, 1]];
-    }
-
-    getIntrinsicMatrix() {
-        return this.K;
+        this.K = this.cv.matFromArray(3, 3, this.cv.CV_64F, [[fx, 0, Math.floor(width / 2)], [0, fy, Math.floor(height / 2)], [0, 0, 1]].flat());
     }
 
     isIntrinsicCameraSet() {
         return this.K != undefined;
     }
 
-    getRotationAndTranslationMatrices(K, corners){
-        // A4 dimensions
-        const real_corners = [[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 0, 0]];
+    getRotationAndTranslationMatrices(corners){
+        const corners_mat = this.cv.matFromArray(4, 2, this.cv.CV_64F, corners.flat());
+        const real_corners = this.cv.matFromArray(4, 3, this.cv.CV_64F, [[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 0, 0]].flat());
 
-        this.cv.solvePnp(corners, real_corners, K, null);
+        let rvec = new this.cv.Mat();
+        let tvec = new this.cv.Mat();
+        const dist = new this.cv.Mat();
+
+        // SolvePnP to get the rotation and translation vectors
+        try {
+            this.cv.solvePnP(real_corners, corners_mat, this.K, dist, rvec, tvec);
+        } catch(error) {
+            console.error("Error in SolvePnp :", error);
+        }
+
+        // Rodrigues to get rotation MATRIX from rotation VECTOR
+        let rotation_mat = new this.cv.Mat();
+        this.cv.Rodrigues(rvec, rotation_mat);
+
+        // Convert from Mat to JSarray
+        let rotation_array = [];
+        let rotation_data = rotation_mat.data64F;
+        for (let i = 0; i < 9; i += 3) {
+            rotation_array.push(rotation_data[i], rotation_data[i+1], rotation_data[i+2]);
+        }
+        let translation_array = tvec.data64F;
+
+        return [rotation_array, translation_array];
     }
 }
