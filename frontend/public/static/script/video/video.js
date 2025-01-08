@@ -117,6 +117,15 @@ function captureFrame() {
 
             const projection_matrices = imgProc.getRotationAndTranslationMatrices(detected_corners);
 
+            window.sharedData = {
+                focal_length,
+                homography: homography_matrix,
+                rotation: projection_matrices[0],
+                translation: projection_matrices[1]
+            };
+
+            console.log(window.sharedData);
+
         } catch(error) {
             if (error.message != "Corners not detected properly")
             {

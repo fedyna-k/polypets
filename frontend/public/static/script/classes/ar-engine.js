@@ -15,7 +15,7 @@ export class ArEngine {
     // WebGL renderer for rendering the scene
     renderer;
 
-    // Orbit camera for viewing the scene
+    // Perspective camera for viewing the scene
     camera;
 
     // Three.js scene object
@@ -36,7 +36,7 @@ export class ArEngine {
     /**
      * Constructs a new instance of the GameEngine.
      * @param renderer - WebGLRenderer to render the scene.
-     * @param camera - OrbitCamera to provide a view of the scene.
+     * @param camera - FPS Camera to provide a view of the scene.
      * @param scene - The Three.js scene that contains objects.
      */
     constructor(canvas, renderer, camera, scene) {
@@ -68,21 +68,15 @@ export class ArEngine {
                 this.objLoader.load(
                     AssetManager.getModel("farm.obj"),
                     (object) => {
-                        object.scale.set(0.1, 0.1, 0.1);
+                        object.scale.set(1, 1, 1);
                         object.name = "farm";
 
                         this.scene.add(object);
 
-                        // Set the camera to orbit around the cube
-                        this.camera.SetTarget(object);
-
-                        this.camera.SetRadius(50);
-                        this.camera.Rotate(0, 35);
-
                         const directionalLight = new THREE.DirectionalLight( 0xffffff, 11 );
 
                         directionalLight.target = object;
-                        directionalLight.position.set(this.camera.position.x, this.camera.position.y, this.camera.position.z);
+                        directionalLight.position.set(3, 3, 3);
                         directionalLight.castShadow = false;
 
                         this.scene.add(directionalLight);
@@ -135,10 +129,17 @@ export class ArEngine {
         const width = this.frameCanvas.width;
         const height = this.frameCanvas.height;
 
+        this.renderer.domElement.width = width;
+        this.renderer.domElement.height = height;
+
         // Resize the renderer and update the camera's aspect ratio
         this.renderer.setSize(width, height);
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
+
+        if (window.sharedData) {
+            this.camera.fov = 2 * Math.atan(36/(2 * window.sharedData.focal_length)) * 180 / Math.PI;
+        }
     }
 
     /**
@@ -152,8 +153,23 @@ export class ArEngine {
 
         farm?.rotateY(deltaTime * speed);
 
-        this.camera.Update(); // Update the camera
+        this.SetCameraTransform();
+
         this.renderer.render(this.scene, this.camera); // Render the scene
+    }
+
+    SetCameraTransform() {
+        if (!window.sharedData) return;
+
+        console.log("[ArEngine] Updating Camera Transform");
+
+        const transform_matrix = new THREE.Matrix4(
+            window.sharedData.rotation[0], window.sharedData.rotation[1], window.sharedData.rotation[2], window.sharedData.translation[0],
+            window.sharedData.rotation[3], window.sharedData.rotation[4], window.sharedData.rotation[5], window.sharedData.translation[1],
+            window.sharedData.rotation[6], window.sharedData.rotation[7], window.sharedData.rotation[8], window.sharedData.translation[2],
+            0, 0, 0, 1);
+
+        this.camera.applyMatrix4(transform_matrix);
     }
 
 
