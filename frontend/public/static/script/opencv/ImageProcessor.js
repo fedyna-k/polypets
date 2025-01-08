@@ -45,10 +45,13 @@ class ImageProcessor {
         const mat = this.cv.matFromImageData(image);
 
         try {
-            return this.homography(mat);
+            let homography = this.homography(mat);
+            console.log(homography);
+            return homography;
         }
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
         catch(e) {
-            console.error(e);
+            // console.error(e);
         }
     }
 

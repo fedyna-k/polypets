@@ -91,7 +91,7 @@ function captureFrame() {
         // Extract frame
         const imageData = ctx.getImageData(0, 0, remoteVideo.videoWidth, remoteVideo.videoHeight);
 
-        imgProc.analyseImage(imageData); // Here we have the homography matrix :)
+        let homography = imgProc.analyseImage(imageData); // Here we have the homography matrix :)
     }
     else {
         clearInterval();
@@ -110,7 +110,6 @@ function onCvReady(){
         console.log("OpenCV set"); 
     });
 }
-
 
 
 // ===========================================================================================

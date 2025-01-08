@@ -52,7 +52,11 @@ app.get("/", (_, res) => {
 });
 
 app.get("/video", (_, res) => {
-  res.render("video");
+  res.render("video-ar");
+});
+
+app.get("/image", (_, res) => {
+  res.render("image");
 });
 
 app.get("/phone", (_, res) => {

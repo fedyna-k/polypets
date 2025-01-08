@@ -1,0 +1,9 @@
+#scene-container {
+    display: grid;
+    place-items: center;
+    place-content: center;
+}
+
+#scene-container > canvas {
+    position: absolute;
+}

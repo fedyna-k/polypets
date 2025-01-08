@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/style/global.css">
+    <link rel="stylesheet" href="../static/style/ar-three-canvas.css">
+    <script src="../static/script/libs/qrcode.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id="qrcode" style="width: 256px;height: 256px;"></div>
+
+    <video id="remoteVideo" autoplay playsinline style="width: 80%; display: none;"></video>
+
+    <div id="scene-container" class="container">
+        <canvas id="frameCanvas" style="display: block; margin-top: 20px; border: 1px solid black;"></canvas>
+    </div>
+
+    <!-- Import openCV -->
+    <script src="../static/script/opencv/ImageProcessor.js"></script>
+    <!-- Load openCV -->
+    <script async src="../static/resources/opencv/opencv.js" onload="onCvReady()"></script>
+    
+    <!-- Import socketio -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js",
+            "three/tsl": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.webgpu.min.js",
+            "three/webgpu": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.webgpu.min.js",
+            "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+          }
+        }
+    </script>
+
+    <!-- Connection to phone + image analysis script -->
+    <script type="module" src="../static/script/scenes/video-ar.js"></script>
+</body>
+</html>
