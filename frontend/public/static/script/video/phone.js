@@ -28,27 +28,35 @@ pc.addEventListener("connectionstatechange", () => {
 
 async function init()
 {
-    //await navigator.mediaDevices.getUserMedia({ video: {facingMode: { exact: "user" }}, audio: false }).then((stream) => {
-    await navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then((stream) => { // TODO switch PC / tel
-        console.log("Stream local démarré", stream);
-        localVideo.srcObject = stream;
-        stream.getTracks().forEach((track) => {pc.addTrack(track, stream); console.log("Track :", track);});
-    }).catch((error) => {
-        console.error("Erreur d'accès à la caméra :", error);
-    });
+    try {
+        //await navigator.mediaDevices.getUserMedia({ video: {facingMode: { exact: "user" }}, audio: false }).then((stream) => {
+        await navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then((stream) => { // TODO switch PC / tel
+            console.log("Stream local démarré", stream);
+            localVideo.srcObject = stream;
+            stream.getTracks().forEach((track) => {pc.addTrack(track, stream); console.log("Track :", track);});
+        }).catch((error) => {
+            console.error("Erreur d'accès à la caméra :", error);
+        });
 
-    console.log("Creation de l'offre (vidéo)");
-    await pc.createOffer({offerToReceiveVideo: true, offerToReceiveAudio: true}).then((offer) => {
-        pc.setLocalDescription(offer);
-        console.log("Envoi de l'offre (vidéo)", offer);
-        socket.emit("signal", { offer });
-        console.log("Offre (vidéo) envoyée", offer);
-    }).catch((error) => {
-        console.error("Erreur lors de la création de l'offre :", error);
-    });
+        console.log("Creation de l'offre (vidéo)");
+        await pc.createOffer({offerToReceiveVideo: true, offerToReceiveAudio: true}).then((offer) => {
+            pc.setLocalDescription(offer);
+            console.log("Envoi de l'offre (vidéo)", offer);
+            socket.emit("signal", { offer });
+            console.log("Offre (vidéo) envoyée", offer);
+        }).catch((error) => {
+            console.error("Erreur lors de la création de l'offre :", error);
+        });
+    } catch (error) {
+        console.error("Erreur lors de l'initialisation :", error);
+    }
 }
 
 init();
+
+const roomId = window.location.pathname.split("/").pop(); // Room ID from Url
+
+socket.emit("join-phone", roomId);
 
 socket.on("signal", async (data) => {
     if (data.answer) {

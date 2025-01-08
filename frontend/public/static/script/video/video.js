@@ -45,18 +45,19 @@ pc.onicecandidate = (event) => {
 };
 
 // Event listener for initiation of socket connection
-socket.on("init", (number) => {
-    console.log(number);
+socket.on("init", (url) => {
+    console.log(url);
     
     const qrCodeContainer = document.getElementById("qrcode");
     qrCodeContainer.innerHTML = "";
 
     new QRCode(qrCodeContainer, {
-        text: number.toString()
+        text: url
     });
 });
 
-// Event listener on the socket for a signal
+socket.emit("join-pc");
+
 socket.on("signal", async (data) => {
     console.log("Signal reçu côté PC :", data);
     if (data.offer) {
