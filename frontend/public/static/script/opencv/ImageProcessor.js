@@ -3,7 +3,6 @@
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 class ImageProcessor {
-
     /**
      * 
      * @param {*} opencvObject The imported openCV object
@@ -35,6 +34,10 @@ class ImageProcessor {
         this.detector = new this.cv.aruco_ArucoDetector(this.dictionary, this.params, this.refinedParam);
     }
 
+    setMat(image) {
+        this.mat = this.cv.matFromImageData(image);
+    }
+
     /**
      * Processes an image to get the homography matrix to get the plane of the board.
      * If not all corners of the board are detected, prints an error and does not return anything.
@@ -60,10 +63,10 @@ class ImageProcessor {
      * @param {cv.Mat} mat A cv.Mat image
      * @returns [markers_position, ids] : The position of all aruco markers in the image with their associated id
      */
-    analyseMat(mat) {
+    analyseMat() {
         let gray = new this.cv.Mat();
-        this.cv.cvtColor(mat, gray, this.cv.COLOR_RGB2GRAY);
-        mat.delete();
+        this.cv.cvtColor(this.mat, gray, this.cv.COLOR_RGB2GRAY);
+        this.mat.delete();
         
         let markers_position = new this.cv.MatVector();
         let ids = new this.cv.Mat();
@@ -80,14 +83,8 @@ class ImageProcessor {
         return [markers_position, ids];
     }
 
-    /**
-     * Computes the homography matrix of an openCV image to get the plane of the board.
-     * @param {cv.Mat} mat A cv.Mat image
-     * @returns The homography matrix to get the plane of the board from the photo
-     * @throws An error when the aruco markers of the corners are not detected
-     */
-    homography(mat) {
-        let [markers_position, ids] = this.analyseMat(mat);
+    detectCorners() {
+        let [markers_position, ids] = this.analyseMat();
 
         let detected_corners = [0, 0, 0, 0];
         for (let i = 0; i < ids.size()["height"]; i++) {
@@ -104,13 +101,74 @@ class ImageProcessor {
             // --------------------------------------------------------------------------------
         }
 
-        const src_points = this.cv.matFromArray(4, 2, this.cv.CV_64F, [5, 5, 284, 5, 284, 197, 5, 197]);
-        
         if (detected_corners.some(corner => typeof corner == "number")) {
             throw new Error("Corners not detected properly");
         }
+
+        return detected_corners;
+    }
+
+    /**
+     * Computes the homography matrix of an openCV image to get the plane of the board.
+     * @param {cv.Mat} mat A cv.Mat image
+     * @returns The homography matrix to get the plane of the board from the photo
+     * @throws An error when the aruco markers of the corners are not detected
+     */
+    homography(detected_corners) {
+        const src_points = this.cv.matFromArray(4, 2, this.cv.CV_64F, [5, 5, 284, 5, 284, 197, 5, 197]);
+        
+        // if (detected_corners.some(corner => typeof corner == "number")) {
+        //     throw new Error("Corners not detected properly");
+        // }
         
         const H = this.cv.findHomography(this.cv.matFromArray(4, 2, this.cv.CV_64F, detected_corners.flat()), src_points, this.cv.RANSAC, 3, new this.cv.Mat());
         return H.data64F;
+    }
+
+
+    setIntrinsicCameraMatrix(focal_length_35mm, width, height) {
+        // Get FOV and convert to degrees
+        const FOV = 2 * Math.atan(36/(2 * focal_length_35mm)) * 180 / Math.PI;
+
+        // Get fx and fy
+        const fx = Math.floor(width / (2 * Math.tan(FOV)));
+        const fy = Math.floor(height / (2 * Math.tan(FOV)));
+
+        // Get instrinsic camera matrix
+        this.K = this.cv.matFromArray(3, 3, this.cv.CV_64F, [[fx, 0, Math.floor(width / 2)], [0, fy, Math.floor(height / 2)], [0, 0, 1]].flat());
+    }
+
+    isIntrinsicCameraSet() {
+        return this.K != undefined;
+    }
+
+    getRotationAndTranslationMatrices(corners){
+        const corners_mat = this.cv.matFromArray(4, 2, this.cv.CV_64F, corners.flat());
+        const real_corners = this.cv.matFromArray(4, 3, this.cv.CV_64F, [[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 0, 0]].flat());
+
+        let rvec = new this.cv.Mat();
+        let tvec = new this.cv.Mat();
+        const dist = new this.cv.Mat();
+
+        // SolvePnP to get the rotation and translation vectors
+        try {
+            this.cv.solvePnP(real_corners, corners_mat, this.K, dist, rvec, tvec);
+        } catch(error) {
+            console.error("Error in SolvePnp :", error);
+        }
+
+        // Rodrigues to get rotation MATRIX from rotation VECTOR
+        let rotation_mat = new this.cv.Mat();
+        this.cv.Rodrigues(rvec, rotation_mat);
+
+        // Convert from Mat to JSarray
+        let rotation_array = [];
+        let rotation_data = rotation_mat.data64F;
+        for (let i = 0; i < 9; i += 3) {
+            rotation_array.push(rotation_data[i], rotation_data[i+1], rotation_data[i+2]);
+        }
+        let translation_array = tvec.data64F;
+
+        return [rotation_array, translation_array];
     }
 }

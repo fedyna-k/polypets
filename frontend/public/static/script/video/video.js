@@ -6,6 +6,10 @@ const imgProc = new ImageProcessor();
 const FRAMES_PER_SECONDS = 30;
 const REFRESH_RATE = (1/FRAMES_PER_SECONDS) * 1000;
 
+// Video parameters
+let focal_length;
+
+// Video Canva
 const remoteVideo = document.getElementById("remoteVideo"); // video HTML element
 const frameCanvas = document.getElementById("frameCanvas"); // Canva HTML element
 const ctx = frameCanvas.getContext("2d"); // JS Canva
@@ -17,8 +21,17 @@ const servers = {
     ]
 };
 
-const pc = new RTCPeerConnection(servers); // Peer Connection
+const pc = new RTCPeerConnection(); // Peer Connection
+pc.ondatachannel = (event) => {
+    const channel = event.channel;
 
+    channel.onopen = () => {console.log("Opened");};
+
+    channel.onmessage = (event) => {
+        focal_length = event.data;
+        imgProc.setIntrinsicCameraMatrix(focal_length, remoteVideo.videoWidth, remoteVideo.videoHeight);
+    };
+};
 
 
 // ===========================================================================================
@@ -81,7 +94,7 @@ pc.addEventListener("connectionstatechange", () => {
  * When called, gets the current frame and analyses it
  */
 function captureFrame() {
-    if (remoteVideo.videoWidth && remoteVideo.videoHeight) {
+    if (remoteVideo.videoWidth && remoteVideo.videoHeight && imgProc.isIntrinsicCameraSet()) {
         frameCanvas.width = remoteVideo.videoWidth;
         frameCanvas.height = remoteVideo.videoHeight;
 
@@ -91,7 +104,27 @@ function captureFrame() {
         // Extract frame
         const imageData = ctx.getImageData(0, 0, remoteVideo.videoWidth, remoteVideo.videoHeight);
 
-        let homography = imgProc.analyseImage(imageData); // Here we have the homography matrix :)
+        imgProc.setMat(imageData);
+
+        try {
+            const detected_corners = imgProc.detectCorners();
+
+            // Here we have the 4 corners or an error
+
+            console.log("Corners detected :)");
+
+            const homography_matrix = imgProc.homography(detected_corners); // Here we have the homography matrix :)
+
+            const projection_matrices = imgProc.getRotationAndTranslationMatrices(detected_corners);
+
+        } catch(error) {
+            if (error.message != "Corners not detected properly")
+            {
+                console.log(error);
+            }
+        }
+
+        
     }
     else {
         clearInterval();
@@ -110,6 +143,7 @@ function onCvReady(){
         console.log("OpenCV set"); 
     });
 }
+
 
 
 // ===========================================================================================

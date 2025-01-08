@@ -1,4 +1,5 @@
 /* global io */
+/* global EXIF */
 const socket = io();
 const localVideo = document.getElementById("localVideo");
 
@@ -8,8 +9,9 @@ const servers = {
     ]
 };
 
-const pc = new RTCPeerConnection(servers);
-
+const pc = new RTCPeerConnection();
+let channel = pc.createDataChannel("focal_length");
+channel.onopen = () => {console.log("Opened");};
 
 pc.onicecandidate = (event) => {
     if (event.candidate) {
@@ -23,9 +25,21 @@ pc.addEventListener("connectionstatechange", () => {
     }
 });
 
+function openFile(file){
+    var input = file.target;
+    let reader = new FileReader();
+    let focalLength;
+    reader.onload = function() {
+        EXIF.getData(input.files[0], function() {
+            focalLength = EXIF.getAllTags(this)["FocalLengthIn35mmFilm"];
+            channel.send(String(focalLength));
+        });
+    };
+    reader.readAsArrayBuffer(input.files[0]);
+}
 
-async function init()
-{
+
+async function init(){
     await navigator.mediaDevices.getUserMedia({ video: {facingMode: { exact: "environment" }}, audio: false }).then((stream) => {
         console.log("Stream local démarré");
         localVideo.srcObject = stream;
