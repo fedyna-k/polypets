@@ -17,7 +17,7 @@ resource "google_compute_address" "static_ip" {
 
 resource "google_compute_instance" "default" {
   name         = "polypets-vm"
-  machine_type = "e2-micro"
+  machine_type = "e2-standard-16"
   zone         = var.instance-region
 
   lifecycle {
@@ -29,15 +29,13 @@ resource "google_compute_instance" "default" {
 
   boot_disk {
     initialize_params {
-      image = "cos-cloud/cos-117-lts"
+      image = "debian-cloud/debian-12"
     }
   }
 
-  metadata_startup_script = file("../startup.sh")
-
-  # metadata = {
-  #   "startup-script-url" = join("/", [google_storage_bucket.script_bucket.url, google_storage_bucket_object.script.name])
-  # }
+  metadata = {
+    "startup-script-url" = join("/", [google_storage_bucket.script_bucket.url, google_storage_bucket_object.script.name])
+  }
 
   network_interface {
     subnetwork = google_compute_subnetwork.default.id
