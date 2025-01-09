@@ -2,11 +2,6 @@ variable "bucket-location" {
   type        = string
   default     = "US"
   description = "The bucket location, must be US"
-
-  validation {
-    condition     = can(regex("^US$", var.bucket-location))
-    error_message = "Bucket location must be US."
-  }
 }
 
 variable "code-version" {
