@@ -30,6 +30,7 @@ pc.ondatachannel = (event) => {
     channel.onmessage = (event) => {
         focal_length = event.data;
         imgProc.setIntrinsicCameraMatrix(focal_length, remoteVideo.videoWidth, remoteVideo.videoHeight);
+        console.log("CameraMatrixSet");
     };
 };
 
@@ -114,8 +115,16 @@ function captureFrame() {
             console.log("Corners detected :)");
 
             const homography_matrix = imgProc.homography(detected_corners); // Here we have the homography matrix :)
-
+            
             const projection_matrices = imgProc.getRotationAndTranslationMatrices(detected_corners);
+
+            console.log("Position des corners : --------------");
+            for (let corner of detected_corners) {
+                console.log(corner, imgProc.getmmPosFromPixelPos(corner));
+            }
+            console.log("----------------------------------------");
+
+            console.log(imgProc.detectCards());
 
         } catch(error) {
             if (error.message != "Corners not detected properly")
