@@ -243,11 +243,8 @@ class ImageProcessor {
      */
     getTileNumber(position) {
         // Get warped position
-        let bot_right_corn = this.getmmPosFromPixelPos(this.detected_corners[2]);
-        let x = position[0] * bot_right_corn[0] / 284;
-        let y = position[1] * bot_right_corn[1] / 197;
-        // let x = position[0];
-        // let y = position[1];
+        let x = position[0];
+        let y = position[1];
 
         // Vertical zone
         let vertical;
@@ -295,7 +292,7 @@ class ImageProcessor {
             }
         }
 
-        return mm_pos;
+        return [mm_pos[0] / mm_pos[2], mm_pos[1] / mm_pos[2]];
     }
 
     /**
