@@ -11,7 +11,7 @@ resource "google_compute_firewall" "https" {
   source_ranges = ["0.0.0.0/0"]
 }
 
-resource "google_compute_firewall" "https" {
+resource "google_compute_firewall" "turn" {
   name = "allow-turn"
 
   allow {
