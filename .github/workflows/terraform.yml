@@ -38,6 +38,11 @@ jobs:
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }} 
 
+    - name: Apply env
+      run: sed "s|::ENV::|${ENV_FILE_CONTENT}|g" startup.sh > startup.sh
+      env:
+        ENV_FILE: ${{ secrets.ENV_FILE }} 
+
     - name: Terraform Plan
       run: terraform plan -input=false
       env:

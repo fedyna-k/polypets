@@ -26,7 +26,9 @@ cd polypets
 git pull
 
 # Update secrets
-echo $ENV_FILE > .env
+cat << EOF > .env
+::ENV::
+EOF
 
 # Update certbot certificates
 sudo docker run -it --rm --name certbot \
