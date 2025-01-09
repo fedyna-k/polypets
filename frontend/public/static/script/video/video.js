@@ -118,12 +118,6 @@ function captureFrame() {
             
             const projection_matrices = imgProc.getRotationAndTranslationMatrices(detected_corners);
 
-            console.log("Position des corners : --------------");
-            for (let corner of detected_corners) {
-                console.log(corner, imgProc.getmmPosFromPixelPos(corner));
-            }
-            console.log("----------------------------------------");
-
             console.log(imgProc.detectCards());
 
         } catch(error) {

@@ -139,6 +139,7 @@ class ImageProcessor {
         for (let i = 0; i < ids.size()["height"]; i++) {
             const cur_id = ids.data32S[i];
             if (cur_id < 4) {
+                // Take top left corner of aruco marker
                 detected_corners[cur_id] = [markers_position.get(i).data32F[0], markers_position.get(i).data32F[1]];
             }
 
@@ -154,6 +155,8 @@ class ImageProcessor {
             throw new Error("Corners not detected properly");
         }
 
+        this.detected_corners = detected_corners;
+
         return detected_corners;
     }
 
@@ -164,11 +167,7 @@ class ImageProcessor {
      * @throws An error when the aruco markers of the corners are not detected
      */
     homography(detected_corners) {
-        const src_points = this.cv.matFromArray(4, 2, this.cv.CV_64F, [5, 5, 284, 5, 284, 197, 5, 197]);
-        
-        // if (detected_corners.some(corner => typeof corner == "number")) {
-        //     throw new Error("Corners not detected properly");
-        // }
+        const src_points = this.cv.matFromArray(4, 2, this.cv.CV_64F, [0, 0, 265, 0, 265, 210, 0, 210]);
         
         const H = this.cv.findHomography(this.cv.matFromArray(4, 2, this.cv.CV_64F, detected_corners.flat()), src_points, this.cv.RANSAC, 3, new this.cv.Mat());
         this.homography_matrix = H.data64F;
@@ -243,8 +242,12 @@ class ImageProcessor {
      * @returns Tile number (between 0 and 15, see comments at the top of this file)
      */
     getTileNumber(position) {
-        let x = position[0];
-        let y = position[1];
+        // Get warped position
+        let bot_right_corn = this.getmmPosFromPixelPos(this.detected_corners[2]);
+        let x = position[0] * bot_right_corn[0] / 284;
+        let y = position[1] * bot_right_corn[1] / 197;
+        // let x = position[0];
+        // let y = position[1];
 
         // Vertical zone
         let vertical;
@@ -285,7 +288,6 @@ class ImageProcessor {
     getmmPosFromPixelPos(pixel_pos) {
         let vect = [pixel_pos[0], pixel_pos[1], 1];
         let mm_pos = [0, 0, 0];
-        // console.log(this.homography_matrix, vect);
 
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
@@ -309,13 +311,11 @@ class ImageProcessor {
             if (cur_id >= 4) {
                 // Get position as mm
                 let card_pix = [markers_position.get(i).data32F[0], markers_position.get(i).data32F[1]];
-                // console.log(card_pix);
 
                 let card_mm = this.getmmPosFromPixelPos(card_pix);
                 for (let i of card_mm) {
                     if (i < 0) {throw new Error("Wrong dimension in mm");}
                 }
-                console.log(card_mm);
 
                 // Get card tile
                 cards[this.getTileNumber(card_mm)] = cur_id;
