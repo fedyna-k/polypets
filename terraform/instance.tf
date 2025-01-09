@@ -40,4 +40,11 @@ resource "google_compute_instance" "default" {
       public_ptr_domain_name = "app.fedyna.fr."
     }
   }
+
+  service_account {
+    email = "38428737821-compute@developer.gserviceaccount.com"
+    scopes = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
+  }
 }
