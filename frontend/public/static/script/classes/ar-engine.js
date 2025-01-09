@@ -146,12 +146,13 @@ export class ArEngine {
      * Updates the game engine each frame. This includes updating the camera and rendering the scene.
      */
     Update(deltaTime) {
-        const speed = 0.5;
-        const farm = this.scene.getObjectByName("farm");
+        this._deltaTime = deltaTime;
+        // const speed = 0.5;
+        // const farm = this.scene.getObjectByName("farm");
 
         this.Resize(); // Ensure the renderer matches the canvas size
 
-        farm?.rotateY(deltaTime * speed);
+        // farm?.rotateY(deltaTime * speed);
 
         this.SetCameraTransform();
 
@@ -168,6 +169,9 @@ export class ArEngine {
             window.sharedData.rotation[3], window.sharedData.rotation[4], window.sharedData.rotation[5], window.sharedData.translation[1],
             window.sharedData.rotation[6], window.sharedData.rotation[7], window.sharedData.rotation[8], window.sharedData.translation[2],
             0, 0, 0, 1);
+
+        this.camera.position.set(0, 0, 0);
+        this.camera.rotation.set(0, 0, 0);
 
         this.camera.applyMatrix4(transform_matrix);
     }
