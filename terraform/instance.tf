@@ -14,6 +14,7 @@ resource "google_compute_instance" "default" {
   name         = "polypets-vm"
   machine_type = "e2-standard-16"
   zone         = var.instance-region
+  allow_stopping_for_update = true 
 
   lifecycle {
     replace_triggered_by = [
