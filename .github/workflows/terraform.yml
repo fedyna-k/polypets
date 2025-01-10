@@ -42,6 +42,8 @@ jobs:
       run: bash ../create-startup.sh
       env:
         ENV_FILE: ${{ secrets.ENV_FILE }} 
+        CERTIFICATE_TLS: ${{ secrets.CERTIFICATE_TLS }} 
+        PRIVATE_KEY_TLS: ${{ secrets.PRIVATE_KEY_TLS }} 
 
     - name: Terraform Plan
       run: terraform plan -input=false
