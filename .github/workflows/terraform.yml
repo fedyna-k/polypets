@@ -39,7 +39,7 @@ jobs:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }} 
 
     - name: Apply env
-      run: bash ./create-startup.sh
+      run: bash ../create-startup.sh
       env:
         ENV_FILE: ${{ secrets.ENV_FILE }} 
 
