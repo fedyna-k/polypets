@@ -185,8 +185,6 @@ export class ArEngine {
         this.camera.matrixWorldNeedsUpdate = true;
     }
 
-
-
     SetHomography(h) {
         if (h == null) return;
         this.homography = h;

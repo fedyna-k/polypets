@@ -5,7 +5,13 @@ const localVideo = document.getElementById("localVideo");
 
 const servers = {
     iceServers: [
-        { urls: "stun:stun.l.google.com:19302" }
+        { urls: "stun:stun.l.google.com:19302" }/*,
+        {
+            urls: "turn:app.fedyna.fr:3478",
+            username: "polypets",
+            credential: "polypets"
+        }
+        */
     ]
 };
 
