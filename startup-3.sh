@@ -1,3 +1,4 @@
+
 EOF
 
 sudo systemctl kill coturn
