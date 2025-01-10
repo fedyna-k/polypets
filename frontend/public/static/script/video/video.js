@@ -26,7 +26,7 @@ const servers = {
     ]
 };
 
-const pc = new RTCPeerConnection(); // Peer Connection
+const pc = new RTCPeerConnection(servers); // Peer Connection
 pc.ondatachannel = (event) => {
     const channel = event.channel;
 

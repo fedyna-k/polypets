@@ -14,7 +14,7 @@ const servers = {
     ]
 };
 
-const pc = new RTCPeerConnection();
+const pc = new RTCPeerConnection(servers);
 let channel = pc.createDataChannel("focal_length");
 channel.onopen = () => {console.log("Opened");};
 
