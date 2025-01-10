@@ -175,14 +175,16 @@ export class ArEngine {
             0, 0, 0, 1
         );
 
-        // Ajustement du système de coordonnées d'OpenCV à THREE.js
-        // const adjust_matrix = new THREE.Matrix4().makeRotationY(Math.PI);
-        // transform_matrix.premultiply(adjust_matrix);
+        // Ajustement des coordonnées d'OpenCV à THREE.js
+        const adjust_matrix = new THREE.Matrix4().makeScale(1, -1, -1);
+        transform_matrix.premultiply(adjust_matrix);
 
         // Application la transformation sur la caméra
         this.camera.matrix.identity(); // Réinitialisation de la matrice précédente
         this.camera.applyMatrix4(transform_matrix);
         this.camera.matrixWorldNeedsUpdate = true;
+
+        console.log("Final Transform Matrix:", transform_matrix.elements);
     }
 
     SetHomography(h) {
