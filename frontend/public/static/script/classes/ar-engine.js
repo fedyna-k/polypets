@@ -164,17 +164,27 @@ export class ArEngine {
 
         console.log("[ArEngine] Updating Camera Transform");
 
-        const transform_matrix = new THREE.Matrix4(
-            window.sharedData.rotation[0], window.sharedData.rotation[1], window.sharedData.rotation[2], window.sharedData.translation[0],
-            window.sharedData.rotation[3], window.sharedData.rotation[4], window.sharedData.rotation[5], window.sharedData.translation[1],
-            window.sharedData.rotation[6], window.sharedData.rotation[7], window.sharedData.rotation[8], window.sharedData.translation[2],
-            0, 0, 0, 1);
+        // Conversion de la rotation et translation OpenCV vers une matrice 4x4 pour THREE.js
+        const rotation = window.sharedData.rotation;
+        const translation = window.sharedData.translation;
 
-        this.camera.position.set(0, 0, 0);
-        this.camera.rotation.set(0, 0, 0);
+        const transform_matrix = new THREE.Matrix4().set(
+            rotation[0], rotation[3], rotation[6], translation[0],
+            rotation[1], rotation[4], rotation[7], translation[1],
+            rotation[2], rotation[5], rotation[8], translation[2],
+            0, 0, 0, 1
+        );
 
+        // Ajustement du système de coordonnées d'OpenCV à THREE.js
+        // const adjust_matrix = new THREE.Matrix4().makeRotationY(Math.PI);
+        // transform_matrix.premultiply(adjust_matrix);
+
+        // Application la transformation sur la caméra
+        this.camera.matrix.identity(); // Réinitialisation de la matrice précédente
         this.camera.applyMatrix4(transform_matrix);
+        this.camera.matrixWorldNeedsUpdate = true;
     }
+
 
 
     SetHomography(h) {
