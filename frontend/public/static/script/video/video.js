@@ -70,6 +70,8 @@ socket.on("init", (number) => {
 
 // Event listener on the socket for a signal
 socket.on("signal", async (data) => {
+    console.log(data);
+
     if (data.offer) {
         await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
         const answer = await pc.createAnswer();
