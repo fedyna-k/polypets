@@ -171,7 +171,7 @@ export class ArEngine {
         const transform_matrix = new THREE.Matrix4().set(
             rotation[0], rotation[3], rotation[6], translation[0],
             rotation[1], rotation[4], rotation[7], translation[1],
-            rotation[2], rotation[5], rotation[8], translation[2],
+            rotation[2], rotation[5], rotation[8], translation[2] + 10,
             0, 0, 0, 1
         );
 
@@ -180,8 +180,8 @@ export class ArEngine {
         transform_matrix.premultiply(adjust_matrix);
 
         // Application la transformation sur la caméra
-        this.camera.matrix.identity(); // Réinitialisation de la matrice précédente
-        this.camera.applyMatrix4(transform_matrix);
+        this.camera.matrix.copy(transform_matrix);
+        this.camera.matrixAutoUpdate = false;
         this.camera.matrixWorldNeedsUpdate = true;
 
         console.log("Final Transform Matrix:", transform_matrix.elements);
