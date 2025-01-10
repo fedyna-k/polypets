@@ -57,9 +57,7 @@ pc.onicecandidate = (event) => {
 };
 
 // Event listener for initiation of socket connection
-socket.on("init", (number) => {
-    console.log(number);
-    
+socket.on("init", (number) => {    
     const qrCodeContainer = document.getElementById("qrcode");
     qrCodeContainer.innerHTML = "";
 
@@ -70,8 +68,6 @@ socket.on("init", (number) => {
 
 // Event listener on the socket for a signal
 socket.on("signal", async (data) => {
-    console.log(data);
-
     if (data.offer) {
         await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
         const answer = await pc.createAnswer();
@@ -81,7 +77,6 @@ socket.on("signal", async (data) => {
         await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
     } else if (data.candidate) {
         await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-        console.log(`candidate ok: ${data.candidate.usernameFragment}`);
     }
 });
 
