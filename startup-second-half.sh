@@ -10,4 +10,4 @@ sudo cp /etc/letsencrypt/live/app.fedyna.fr/ ./nginx/certs/dev
 
 sudo docker compose up --build -d  # Web server
 sudo systemctl kill coturn
-sudo turnserver --log-file stdout  # TURN server
+sudo turnserver --log-file stdout -u polypets:polypets  # TURN server
