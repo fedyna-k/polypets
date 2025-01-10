@@ -1,7 +1,5 @@
 #!/bin/bash
 
-/usr/bin/logger "===== ENTERING STARTUP SCRIPT ====="
-
 # Install docker and all dependencies
 sudo apt update
 sudo apt -y --allow-downgrades --allow-remove-essential --allow-change-held-packages install ca-certificates curl git apt-transport-artifact-registry coturn
@@ -37,8 +35,6 @@ sudo docker run -it --rm --name certbot \
             certbot/certbot certonly --standalone -d app.fedyna.fr --text --agree-tos --email fedyna.kevin@gmail.com --server https://acme-v02.api.letsencrypt.org/directory --rsa-key-size 4096 --verbose --keep-until-expiring --preferred-challenges=http
 
 sudo cp /etc/letsencrypt/live/app.fedyna.fr/ ./nginx/certs/dev
-
-/usr/bin/logger "===== STARTING DOCKER COMPOSE ====="
 
 sudo docker compose up --build -d  # Web server
 sudo systemctl kill coturn
