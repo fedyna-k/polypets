@@ -1,3 +1,10 @@
+#!/bin/bash
+
 cd ..
-echo "${$(cat startup-template.sh)/::ENV::/${ENV_FILE}}" > startup.sh
+
+
+cat startup-first-half.sh | tee startup.sh
+echo "${ENV_FILE}" | tee -a startup.sh
+cat startup-second-half.sh | tee -a startup.sh
+
 cd terraform
