@@ -1,2 +1,2 @@
 EOF
-cat << EOF > ./nginx/certs/dev/cert.pem
+cat<<EOF >./nginx/certs/dev/cert.pem

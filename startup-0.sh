@@ -24,4 +24,4 @@ cd polypets
 git pull
 
 # Update secrets
-cat << EOF > .env
+cat<<EOF >.env
