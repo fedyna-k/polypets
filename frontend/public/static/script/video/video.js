@@ -81,6 +81,7 @@ socket.on("signal", async (data) => {
         await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
     } else if (data.candidate) {
         await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+        console.log(`candidate ok: ${data.candidate.usernameFragment}`);
     }
 });
 
