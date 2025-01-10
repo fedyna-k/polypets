@@ -39,7 +39,7 @@ jobs:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }} 
 
     - name: Apply env
-      run: sed "s|::ENV::|${ENV_FILE}|g" startup-template.sh > startup.sh
+      run: echo "${$(cat startup-template.sh)/::ENV::/${ENV_FILE}}" > startup.sh
       env:
         ENV_FILE: ${{ secrets.ENV_FILE }} 
 
