@@ -95,9 +95,9 @@ class ImageProcessor {
 
             
             // TESTS SEULEMENT : LES COINS EN BAS SONT INVERSÉS SUITE À UNE ERREUR D'IMPRESSION
-            let tmp = detected_corners[3];
-            detected_corners[3] = detected_corners[2];
-            detected_corners[2] = tmp;
+            // let tmp = detected_corners[3];
+            // detected_corners[3] = detected_corners[2];
+            // detected_corners[2] = tmp;
             // --------------------------------------------------------------------------------
         }
 
@@ -140,6 +140,10 @@ class ImageProcessor {
 
     isIntrinsicCameraSet() {
         return this.K != undefined;
+    }
+
+    getInstrinsicCamera() {
+        return this.K.data64F;
     }
 
     getRotationAndTranslationMatrices(corners){

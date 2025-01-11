@@ -162,23 +162,40 @@ export class ArEngine {
     SetCameraTransform() {
         if (!window.sharedData) return;
 
-        console.log("[ArEngine] Updating Camera Transform");
+        // console.log("[ArEngine] Updating Camera Transform");
 
         // Conversion de la rotation et translation OpenCV vers une matrice 4x4 pour THREE.js
         const rotation = window.sharedData.rotation;
         const translation = window.sharedData.translation;
+        const K = window.sharedData.K;
 
-        const transform_matrix = new THREE.Matrix4().set(
-            rotation[0], rotation[3], rotation[6], translation[0],
-            rotation[1], rotation[4], rotation[7], translation[1],
-            rotation[2], rotation[5], rotation[8], translation[2] + 10,
-            0, 0, 0, 1
-        );
+        const matrix = [rotation[0], rotation[1], rotation[2], translation[0],
+            rotation[3], rotation[5], rotation[6], translation[1],
+            rotation[6], rotation[7], rotation[8], translation[2]];
+        const projection = Array(12).fill(0);
 
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 4; j++){
+                for (let k = 0; k < 3; k++){
+                    projection[i*4 + j] += K[i*3 + k] * matrix[k*4 + j];
+                }
+            }
+        }
+
+        // console.log("Result : -------", projection);
+
+        projection.push(0);
+        projection.push(0);
+        projection.push(0);
+        projection.push(1);
+
+        const transform_matrix = new THREE.Matrix4().fromArray(projection);
+
+        
         // Ajustement des coordonnées d'OpenCV à THREE.js
-        const adjust_matrix = new THREE.Matrix4().makeScale(1, -1, -1);
-        transform_matrix.premultiply(adjust_matrix);
-
+        // const adjust_matrix = new THREE.Matrix4().makeScale(1, 1, 1);
+        // transform_matrix.premultiply(adjust_matrix);
+        
         // Application la transformation sur la caméra
         this.camera.matrix.copy(transform_matrix);
         this.camera.matrixAutoUpdate = false;

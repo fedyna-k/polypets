@@ -124,10 +124,11 @@ function captureFrame() {
                 focal_length,
                 homography: homography_matrix,
                 rotation: projection_matrices[0],
-                translation: projection_matrices[1]
+                translation: projection_matrices[1],
+                K: imgProc.getInstrinsicCamera()
             };
 
-            console.log(window.sharedData);
+            // console.log(window.sharedData);
 
         } catch(error) {
             if (error.message != "Corners not detected properly")
