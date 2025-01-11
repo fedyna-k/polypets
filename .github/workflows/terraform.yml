@@ -2,7 +2,7 @@ name: 'Terraform'
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "infra" ]
   pull_request:
 
 permissions:
@@ -38,13 +38,20 @@ jobs:
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }} 
 
+    - name: Apply env
+      run: bash ../create-startup.sh
+      env:
+        ENV_FILE: ${{ secrets.ENV_FILE }} 
+        CERTIFICATE_TLS: ${{ secrets.CERTIFICATE_TLS }} 
+        PRIVATE_KEY_TLS: ${{ secrets.PRIVATE_KEY_TLS }} 
+
     - name: Terraform Plan
       run: terraform plan -input=false
       env:
-        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }} 
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push' || github.ref == 'refs/heads/infra'
       run: terraform apply -auto-approve -input=false
       env:
-        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }} 
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}

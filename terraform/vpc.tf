@@ -2,11 +2,6 @@ variable "subnet-region" {
   type        = string
   default     = "us-east1"
   description = "The Subnet region, us-east1 is recommanded as it is the nearest"
-
-  validation {
-    condition     = can(regex("^us-(east|west|central)1$", var.subnet-region))
-    error_message = "Subnet region must be in US1, may it be east central or west"
-  }
 }
 
 resource "google_compute_network" "vpc_network" {

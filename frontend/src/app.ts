@@ -59,6 +59,11 @@ app.get("/image", (_, res) => {
   res.render("image");
 });
 
+app.get("/phone/:id", (req, res) => {
+  const roomId = req.params.id;
+  res.render("phone-video", { roomId }); 
+});
+
 app.get("/phone", (_, res) => {
   res.render("phone-video");
 });
@@ -84,30 +89,45 @@ GameData.initializeData();
 // Creating server
 const server = https.createServer(options, app);
 const io = new Server(server);
+const SERVER_IP = "147.94.245.221"; // A modifier
 
-// Managing Web Sockets
-// io.on("connection", (socket: Socket) => {
-//   logger.info({
-//     message: `User connection: ${socket.id}`,
-//     context: "app.ts"
-//   });
+// Compteur de room
+let roomCounter = 0; 
 
-//   socket.on("message", (message: string) => {
-//     logger.info({
-//       message: `Message reveived from ${socket.id} : ${message}`,
-//       context: "app.ts"
-//     });
-//   });
-// });
 
 io.on("connection", (socket: Socket) => {
   console.log("Nouvelle connexion WebSocket");
 
-  socket.emit("init", socket.id);
+  socket.on("join-pc", () => {
+    const roomId = roomCounter.toString().padStart(4, "0"); 
+    roomCounter += 1; 
+
+    socket.join(roomId); 
+    console.log(`PC ajouté à la room: ${roomId}`);
+
+    socket.emit("init", `https://${SERVER_IP}/phone/${roomId}`);
+
+  });
+
+  socket.on("join-phone", (roomId: string) => {
+    const room = io.sockets.adapter.rooms.get(roomId); 
+    if (room) {
+      socket.join(roomId); 
+      console.log(`Téléphone rejoint la room: ${roomId}`);
+
+      io.to(roomId).emit("phone-connected");
+    } else {
+      console.log(`Room non trouvée: ${roomId}`);
+      socket.emit("error", "Room non trouvée");
+    }
+  });
 
   socket.on("signal", (data) => {
-      console.log("Signal reçu :", data);
-      socket.broadcast.emit("signal", data);
+    const { roomId, signalData } = data;
+    if (roomId) {
+        console.log(`Signal transmis à la room ${roomId} :`, signalData);
+        io.to(roomId).emit("signal", signalData);
+    }
   });
 
   socket.on("disconnect", () => {
