@@ -4,7 +4,7 @@ import {ArEngine} from "../classes/ar-engine.js";
 import {PerspectiveCamera} from "three";
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-const camera = new PerspectiveCamera(20, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new PerspectiveCamera(window.sharedData.FOV, window.sharedData.video_width / window.sharedData.video_height, 0.1, 1000);
 const scene3d = new THREE.Scene();
 
 const frameCanvas = document.getElementById("frameCanvas");

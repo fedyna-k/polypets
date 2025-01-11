@@ -89,7 +89,7 @@ GameData.initializeData();
 // Creating server
 const server = https.createServer(options, app);
 const io = new Server(server);
-const SERVER_IP = "147.94.245.221"; // A modifier
+const SERVER_IP = "192.168.1.18"; // A modifier
 
 // Compteur de room
 let roomCounter = 0; 
@@ -115,7 +115,7 @@ io.on("connection", (socket: Socket) => {
       socket.join(roomId); 
       console.log(`Téléphone rejoint la room: ${roomId}`);
 
-      io.to(roomId).emit("phone-connected");
+      io.to(roomId).emit("signal", "phone-connected");
     } else {
       console.log(`Room non trouvée: ${roomId}`);
       socket.emit("error", "Room non trouvée");
@@ -126,7 +126,7 @@ io.on("connection", (socket: Socket) => {
     const { roomId, signalData } = data;
     if (roomId) {
         console.log(`Signal transmis à la room ${roomId} :`, signalData);
-        io.to(roomId).emit("signal", signalData);
+        socket.to(roomId).emit("signal", signalData);
     }
   });
 
