@@ -1,4 +1,4 @@
-import {Color, LoadingManager} from "three";
+import {Group, LoadingManager} from "three";
 import * as THREE from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { MTLLoader } from "three/addons/loaders/MTLLoader.js";
@@ -51,59 +51,57 @@ export class GameEngine {
      * Creates a cube, sets up the camera, and initializes input handling.
      */
     Start(sceneId) {
-
-        this.mtlLoader.load(
-            AssetManager.getMaterial("farm.mtl"),
-            (materials) => {
-                materials.preload();
-                console.log(materials);
-                this.objLoader.setMaterials(materials);
-                this.objLoader.load(
-                    AssetManager.getModel("farm.obj"),
-                    (object) => {
-                        object.scale.set(0.1, 0.1, 0.1);
-                        object.name = "farm";
-
-                        this.scene.add(object);
-
-                        // Set the camera to orbit around the cube
-                        this.camera.SetTarget(object);
-
-                        this.camera.SetRadius(50);
-                        this.camera.Rotate(0, 35);
-
-                        const directionalLight = new THREE.DirectionalLight( 0xffffff, 11 );
-
-                        directionalLight.target = object;
-                        directionalLight.position.set(this.camera.position.x, this.camera.position.y, this.camera.position.z);
-                        directionalLight.castShadow = false;
-
-                        this.scene.add(directionalLight);
-                    },
-                    (xhr) => {
-                        console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
-                    },
-                    (error) => {
-                        console.log(error);
-                    }
-                );
-            },
-            (xhr) => {
-                console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
-            },
+        // Farm
+        this.LoadObject("farm.mtl", "farm.obj", "farm",
             () => {
-                console.log("An error happened");
-            }
-        );
+                const farm_obj = this.scene.getObjectByName("farm");
+                farm_obj.scale.set(0.1, 0.1, 0.1);
 
-        this.scene.background = new Color(0.169,1,1);
+                // Set the camera to orbit around the farm
+                this.camera.SetTarget(farm_obj);
+                this.camera.SetRadius(50);
+                this.camera.Rotate(0, 35);
+
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 11);
+                directionalLight.target = farm_obj;
+                directionalLight.position.set(this.camera.position.x, this.camera.position.y, this.camera.position.z);
+                directionalLight.castShadow = false;
+
+                // Add directional light
+                this.scene.add(directionalLight);
+
+                // Clouds
+                this.LoadObject("clouds.mtl", "clouds.obj", "cloud",
+                    () => {
+                        const obj = this.scene.getObjectByName("cloud");
+                        const farm_obj = this.scene.getObjectByName("farm");
+
+                        obj.scale.set(7, 7, 7);
+                        obj.position.set(6, 6, 0);
+                        farm_obj.attach(obj);
+                    });
+
+                this.LoadObject("clouds.mtl", "clouds.obj", "cloud2",
+                    () => {
+                        const obj = this.scene.getObjectByName("cloud2");
+                        const farm_obj = this.scene.getObjectByName("farm");
+
+                        obj.scale.set(7, 7, 7);
+                        obj.position.set(-2, 6, 6);
+                        farm_obj.attach(obj);
+                    });
+            });
+
+        this.scene.background = new THREE.Color(0.169, 1, 1);
 
         // Get the container element where the scene will be rendered
         const container = document.getElementById(sceneId);
 
         // Append the renderer's canvas to the container
-        container?.appendChild(this.renderer.domElement);
-        this.renderer.domElement.classList.add("three-canva");
+        if (container) {
+            container.appendChild(this.renderer.domElement);
+            this.renderer.domElement.classList.add("three-canva");
+        }
 
         // Setup a resize observer for handling dynamic resizing of the renderer
         const resizeRenderer = () => {
@@ -118,7 +116,6 @@ export class GameEngine {
             this.camera.updateProjectionMatrix();
         };
 
-        // Observe the container's size and trigger the resize handler
         if (container) {
             const observer = new ResizeObserver(() => {
                 resizeRenderer();
@@ -126,11 +123,44 @@ export class GameEngine {
             observer.observe(container);
         }
 
-        // Perform the initial resizing of the renderer
         resizeRenderer();
 
         // Initialize mouse input handling
         this.Input();
+    }
+
+    LoadObject(material, model, name, callback) {
+        this.mtlLoader.load(
+            AssetManager.getMaterial(material),
+            (mat) => {
+                mat.preload();
+                const loader = new OBJLoader(this.loadingManager);
+                loader.setMaterials(mat);
+                loader.load(
+                    AssetManager.getModel(model),
+                    (obj) => {
+                        obj.name = name;
+                        this.scene.add(obj);
+
+                        if (callback != null) {
+                            callback();
+                        }
+                    },
+                    (xhr) => {
+                        console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+                    },
+                    (error) => {
+                        console.error(`Error loading ${model} :`, error);
+                    }
+                );
+            },
+            (xhr) => {
+                console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+            },
+            () => {
+                console.error(`Error loading ${material}`);
+            }
+        );
     }
 
     /**
