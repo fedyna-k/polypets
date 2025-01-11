@@ -74,10 +74,10 @@ socket.on("init", (url) => {
     qrCodeContainer.innerHTML = "";
 
     new QRCode(qrCodeContainer, {
-        text: url
+        text: `${window.location.origin}${url}`
     });
 
-    document.getElementById("code").innerHTML = url;
+    // document.getElementById("code").innerHTML = url;
 });
 
 socket.on("signal", async (data) => {
@@ -105,7 +105,20 @@ pc.addEventListener("connectionstatechange", () => {
     console.log("PeerConnection State (PC):", pc.connectionState);
     if (pc.connectionState === "connected") {
         console.log("WebRTC Connecté");
+        console.log("Showing Game Canvas");
+        ShowVideo();
     }
+    else if (pc.connectionState === "disconnected") {
+        console.log("WebRTC Déconnecté");
+        console.log("Hiding Game Canvas");
+        HideVideo();
+    }
+});
+
+pc.addEventListener("connexion-lost", () => {
+    console.log("WebRTC Déconnecté");
+    console.log("Hiding Game Canvas");
+    HideVideo();
 });
 
 socket.emit("join-pc");
@@ -146,19 +159,6 @@ function HideVideo() {
 // ===========================================================================================
 // EVENT LISTENERS
 // ===========================================================================================
-
-/**
- * On WebRTC Connection, updates the frontend page for gaming
- */
-io.on("connection", (socket) => {
-    console.log("Showing Game Canvas");
-    ShowVideo();
-
-    socket.on("disconnect", () => {
-        console.log("Hiding Game Canvas");
-        HideVideo();
-    });
-});
 
 /**
  * When called, gets the current frame and analyses it

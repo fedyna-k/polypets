@@ -51,6 +51,10 @@ app.get("/", (_, res) => {
   res.render("index");
 });
 
+app.get("/create", (_, res) => {
+  res.render("create-game");
+});
+
 app.get("/video", (_, res) => {
   res.render("video");
 });
@@ -89,7 +93,6 @@ GameData.initializeData();
 // Creating server
 const server = https.createServer(options, app);
 const io = new Server(server);
-const SERVER_IP = "192.168.1.18"; // A modifier
 
 // Compteur de room
 let roomCounter = 0; 
@@ -105,7 +108,7 @@ io.on("connection", (socket: Socket) => {
     socket.join(roomId); 
     console.log(`PC ajouté à la room: ${roomId}`);
 
-    socket.emit("init", `https://${SERVER_IP}/phone/${roomId}`);
+    socket.emit("init", `/phone/${roomId}`);
 
   });
 
@@ -132,6 +135,7 @@ io.on("connection", (socket: Socket) => {
 
   socket.on("disconnect", () => {
       console.log("Déconnexion WebSocket");
+      io.emit("connexion-lost");
   });
 });
 

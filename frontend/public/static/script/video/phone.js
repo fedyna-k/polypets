@@ -56,8 +56,8 @@ async function init()
         
         socket.emit("join-phone", roomId);
 
-        //await navigator.mediaDevices.getUserMedia({ video: {facingMode: { exact: "user" }}, audio: false }).then((stream) => {
-        await navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then((stream) => { // TODO switch PC / tel
+        await navigator.mediaDevices.getUserMedia({ video: {facingMode: { exact: "environment" }}, audio: false }).then((stream) => {
+        //await navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then((stream) => { // TODO switch PC / tel
             console.log("Stream local démarré", stream);
             localVideo.srcObject = stream;
             stream.getTracks().forEach((track) => {pc.addTrack(track, stream); console.log("Track :", track);});
