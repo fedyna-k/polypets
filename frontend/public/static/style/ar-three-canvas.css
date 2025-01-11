@@ -1,9 +1,9 @@
-#scene-container {
+#game-scene-container {
     display: grid;
     place-items: center;
     place-content: center;
 }
 
-#scene-container > canvas {
+#game-scene-container > canvas:not(#frameCanvas) {
     position: absolute;
 }

@@ -12,7 +12,7 @@ const frameCanvas = document.getElementById("frameCanvas");
 const gameEngine = new ArEngine(frameCanvas, renderer, camera, scene3d);
 
 // Start
-gameEngine.Start("scene-container");
+gameEngine.Start("game-scene-container");
 
 // Init first frame
 let lastTime = 0;

@@ -45,6 +45,12 @@ html, body {
   backdrop-filter: blur(var(--island-blur-radius));
   padding: 4em 3em;
   border-radius: 0.5em;
+  width: auto;
+  transition: width 200ms ease-in-out;
+}
+
+.blur.joined {
+  width: 60dvw;
 }
 
 .menu-button {

@@ -1,8 +1,15 @@
 <img id="logo" src="../static/resources/images/logo.png">
 
-<div class="qr-code">
+<div id="qr-code-div" class="qr-code">
   <div>Connectez votre smartphone</div>
   <img src="../static/resources/images/qr-code-example.png">
+</div>
+
+<div id="game-canvas" style="display: none;">
+  <video id="remoteVideo" autoplay playsinline style="display: none;"></video>
+  <div id="game-scene-container">
+    <canvas id="frameCanvas"></canvas>
+  </div>
 </div>
 
 <div class="waiting-for">
@@ -13,4 +20,20 @@
   <div>En attente du second joueur</div>
 </div>
 
-<button class="menu-button" onclick="render('homepage')">Retour au menu</button>
+<!-- Import Scripts -->
+<!-- Import openCV -->
+<script src="../static/script/opencv/ImageProcessor.js"></script>
+<!-- Load openCV -->
+<script async src="../static/resources/opencv/opencv.js" onload="onCvReady()"></script>
+
+<!-- Import socketio -->
+<script src="/socket.io/socket.io.js"></script>
+
+<!-- Connection to phone + image analysis script -->
+<script src="../static/script/video/video.js"></script>
+
+<!-- Import AR Three JS Overlay -->
+<script type="module" src="../static/script/scenes/video-ar.js"></script>
+
+<!--<button class="menu-button" onclick="render('homepage')">Retour au menu</button>-->
+<button class="menu-button" onclick="ToggleVideo()">Magical Animation</button>
