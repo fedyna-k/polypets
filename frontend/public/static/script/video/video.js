@@ -1,5 +1,6 @@
 /* global io */
 const socket = io(); // websocket
+
 /* global ImageProcessor */
 const imgProc = new ImageProcessor();
 
@@ -27,6 +28,7 @@ const servers = {
 };
 
 const pc = new RTCPeerConnection(servers); // Peer Connection
+let roomId = "";
 pc.ondatachannel = (event) => {
     const channel = event.channel;
 
@@ -58,14 +60,15 @@ pc.ontrack = (event) => {
 // Event listener for ICE candidates
 pc.onicecandidate = (event) => {
     if (event.candidate) {
-        console.log("Envoi du candidat ICE :", event.candidate);
-        socket.emit("signal", { candidate: event.candidate });
+        socket.emit("signal", { "roomId": roomId, "signalData": {candidate: event.candidate} });
     }
 };
 
 // Event listener for initiation of socket connection
 socket.on("init", (url) => {
     console.log(url);
+
+    roomId = url.split("/").pop();
     
     const qrCodeContainer = document.getElementById("qrcode");
     qrCodeContainer.innerHTML = "";
@@ -73,31 +76,27 @@ socket.on("init", (url) => {
     new QRCode(qrCodeContainer, {
         text: url
     });
+
+    document.getElementById("code").innerHTML = url;
 });
 
-socket.emit("join-pc");
-
 socket.on("signal", async (data) => {
-    console.log("Signal reçu côté PC :", data);
     if (data.offer) {
-        console.log("Offre reçue :", data.offer);
+        console.log("Offer received");
         await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
-        console.log("Offre reçue et appliquée");
-
         const answer = await pc.createAnswer();
-        console.log("Envoi de la réponse :", answer);
         await pc.setLocalDescription(answer);
-        socket.emit("signal", { answer });
-        console.log("Réponse envoyé :", answer);
+        socket.emit("signal", { "roomId": roomId, "signalData":  {answer} });
 
     } else if (data.answer) {
-        console.log("Réponse reçue", data.answer);
+        console.log("Answer received");
         await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
-        console.log("Réponse appliquée");
     } else if (data.candidate) {
-        console.log("Candidat ICE reçu", data.candidate);
+        console.log("Candidat reçu");
         await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-        console.log("Candidat ICE ajouté", data.candidate);
+    }
+    else {
+        console.log("Signal reçu", data);
     }
 });
 
@@ -109,6 +108,7 @@ pc.addEventListener("connectionstatechange", () => {
     }
 });
 
+socket.emit("join-pc");
 
 
 // ===========================================================================================
@@ -149,7 +149,10 @@ function captureFrame() {
                 homography: homography_matrix,
                 rotation: projection_matrices[0],
                 translation: projection_matrices[1],
-                K: imgProc.getInstrinsicCamera()
+                K: imgProc.getInstrinsicCamera(),
+                FOV: imgProc.getFOV(),
+                video_width: remoteVideo.videoWidth,
+                video_height: remoteVideo.videoHeight
             };
 
             // console.log(window.sharedData);

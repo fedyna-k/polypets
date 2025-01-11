@@ -185,11 +185,11 @@ class ImageProcessor {
      */
     setIntrinsicCameraMatrix(focal_length_35mm, width, height) {
         // Get FOV and convert to degrees
-        const FOV = 2 * Math.atan(36/(2 * focal_length_35mm)) * 180 / Math.PI;
+        this.FOV = 2 * Math.atan(36/(2 * focal_length_35mm)) * 180 / Math.PI;
 
         // Get fx and fy
-        const fx = Math.floor(width / (2 * Math.tan(FOV)));
-        const fy = Math.floor(height / (2 * Math.tan(FOV)));
+        const fx = Math.floor(width / (2 * Math.tan(this.FOV)));
+        const fy = Math.floor(height / (2 * Math.tan(this.FOV)));
 
         // Get instrinsic camera matrix
         this.K = this.cv.matFromArray(3, 3, this.cv.CV_64F, [[fx, 0, Math.floor(width / 2)], [0, fy, Math.floor(height / 2)], [0, 0, 1]].flat());
@@ -204,6 +204,10 @@ class ImageProcessor {
 
     getInstrinsicCamera() {
         return this.K.data64F;
+    }
+
+    getFOV() {
+        return this.FOV;
     }
 
     /**
