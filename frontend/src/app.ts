@@ -125,7 +125,6 @@ io.on("connection", (socket: Socket) => {
   socket.on("signal", (data) => {
     const { roomId, signalData } = data;
     if (roomId) {
-        console.log(`Signal transmis à la room ${roomId} :`, signalData);
         socket.to(roomId).emit("signal", signalData);
     }
   });

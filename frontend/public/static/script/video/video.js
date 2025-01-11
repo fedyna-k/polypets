@@ -109,39 +109,39 @@ pc.addEventListener("connectionstatechange", () => {
 });
 
 socket.emit("join-pc");
-let videoShown = false;
+// let videoShown = false;
 
-function ToggleVideo() {
-    if (videoShown) {
-        HideVideo();
-    }
-    else {
-        ShowVideo();
-    }
-    videoShown = !videoShown;
-}
+// function ToggleVideo() {
+//     if (videoShown) {
+//         HideVideo();
+//     }
+//     else {
+//         ShowVideo();
+//     }
+//     videoShown = !videoShown;
+// }
 
-function ShowVideo() {
-    const gameCanvas = document.getElementById("game-canvas");
-    const qrCodeDiv = document.getElementById("qr-code-div");
-    const mainBlurDiv = document.getElementById("main-blur");
+// function ShowVideo() {
+//     const gameCanvas = document.getElementById("game-canvas");
+//     const qrCodeDiv = document.getElementById("qr-code-div");
+//     const mainBlurDiv = document.getElementById("main-blur");
 
-    // Change dynamically the css elements (maybe bring this to a function)
-    gameCanvas.style.display = "block";
-    qrCodeDiv.style.display = "none";
-    mainBlurDiv.classList.add("joined");
-}
+//     // Change dynamically the css elements (maybe bring this to a function)
+//     gameCanvas.style.display = "block";
+//     qrCodeDiv.style.display = "none";
+//     mainBlurDiv.classList.add("joined");
+// }
 
-function HideVideo() {
-    const gameCanvas = document.getElementById("game-canvas");
-    const qrCodeDiv = document.getElementById("qr-code-div");
-    const mainBlurDiv = document.getElementById("main-blur");
+// function HideVideo() {
+//     const gameCanvas = document.getElementById("game-canvas");
+//     const qrCodeDiv = document.getElementById("qr-code-div");
+//     const mainBlurDiv = document.getElementById("main-blur");
 
-    // Change dynamically the css elements (maybe bring this to a function)
-    gameCanvas.style.display = "none";
-    qrCodeDiv.style.display = "block";
-    mainBlurDiv.classList.remove("joined");
-}
+//     // Change dynamically the css elements (maybe bring this to a function)
+//     gameCanvas.style.display = "none";
+//     qrCodeDiv.style.display = "block";
+//     mainBlurDiv.classList.remove("joined");
+// }
 
 // ===========================================================================================
 // EVENT LISTENERS
@@ -150,15 +150,15 @@ function HideVideo() {
 /**
  * On WebRTC Connection, updates the frontend page for gaming
  */
-io.on("connection", (socket) => {
-    console.log("Showing Game Canvas");
-    ShowVideo();
+// io.on("connection", (socket) => {
+//     console.log("Showing Game Canvas");
+//     ShowVideo();
 
-    socket.on("disconnect", () => {
-        console.log("Hiding Game Canvas");
-        HideVideo();
-    });
-});
+//     socket.on("disconnect", () => {
+//         console.log("Hiding Game Canvas");
+//         HideVideo();
+//     });
+// });
 
 /**
  * When called, gets the current frame and analyses it
@@ -187,7 +187,7 @@ function captureFrame() {
             
             const projection_matrices = imgProc.getRotationAndTranslationMatrices(detected_corners);
 
-            console.log(imgProc.detectCards());
+            // console.log(imgProc.detectCards());
             
             window.sharedData = {
                 focal_length,
