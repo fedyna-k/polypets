@@ -152,7 +152,7 @@ class ImageProcessor {
         }
 
         if (detected_corners.some(corner => typeof corner == "number")) {
-            throw new Error("Corners not detected properly");
+            //throw new Error("Corners not detected properly");
         }
 
         this.detected_corners = detected_corners;
