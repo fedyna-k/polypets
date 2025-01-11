@@ -5,11 +5,16 @@ const localVideo = document.getElementById("localVideo");
 
 const servers = {
     iceServers: [
-        { urls: "stun:stun.l.google.com:19302" }
+        { urls: "stun:stun.l.google.com:19302" },
+        {
+            urls: "turn:app.fedyna.fr:3478",
+            username: "polypets",
+            credential: "polypets"
+        }
     ]
 };
 
-const pc = new RTCPeerConnection();
+const pc = new RTCPeerConnection(servers);
 let channel = pc.createDataChannel("focal_length");
 channel.onopen = () => {console.log("Opened");};
 
@@ -34,6 +39,8 @@ function openFile(file){
     reader.onload = function() {
         EXIF.getData(input.files[0], function() {
             focalLength = EXIF.getAllTags(this)["FocalLengthIn35mmFilm"];
+            focalLength ??= EXIF.getAllTags(this)["FocalLength"] * 5.41;
+
             channel.send(String(focalLength));
         });
     };

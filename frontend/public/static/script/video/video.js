@@ -17,11 +17,16 @@ const ctx = frameCanvas.getContext("2d"); // JS Canva
 
 const servers = {
     iceServers: [
-        { urls: "stun:stun.l.google.com:19302" }
+        { urls: "stun:stun.l.google.com:19302" },
+        {
+            urls: "turn:app.fedyna.fr:3478",
+            username: "polypets",
+            credential: "polypets"
+        }
     ]
 };
 
-const pc = new RTCPeerConnection(); // Peer Connection
+const pc = new RTCPeerConnection(servers); // Peer Connection
 pc.ondatachannel = (event) => {
     const channel = event.channel;
 
@@ -138,6 +143,16 @@ function captureFrame() {
             const projection_matrices = imgProc.getRotationAndTranslationMatrices(detected_corners);
 
             console.log(imgProc.detectCards());
+            
+            window.sharedData = {
+                focal_length,
+                homography: homography_matrix,
+                rotation: projection_matrices[0],
+                translation: projection_matrices[1],
+                K: imgProc.getInstrinsicCamera()
+            };
+
+            // console.log(window.sharedData);
 
         } catch(error) {
             if (error.message != "Corners not detected properly")

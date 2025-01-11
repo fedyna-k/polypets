@@ -95,10 +95,13 @@ class ImageProcessor {
         const mat = this.cv.matFromImageData(image);
 
         try {
-            return this.homography(mat);
+            let homography = this.homography(mat);
+            console.log(homography);
+            return homography;
         }
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
         catch(e) {
-            console.error(e);
+            // console.error(e);
         }
     }
 
@@ -199,13 +202,16 @@ class ImageProcessor {
         return this.K != undefined;
     }
 
+    getInstrinsicCamera() {
+        return this.K.data64F;
+    }
 
     /**
      * Compute and returns the rotation matrix and translation vector to get the camera pose in our scene from the picture
      * of the board.
      * @param {number[][]} corners Array with the position of the corners of the board (aruco markers 0 to 3) in pixels
      * @returns Array with in first position the rotation matrix and in the second position the translation vector : [rotation_array, translation_array]
-     */
+    */
     getRotationAndTranslationMatrices(corners){
         const corners_mat = this.cv.matFromArray(4, 2, this.cv.CV_64F, corners.flat());
         const real_corners = this.cv.matFromArray(4, 3, this.cv.CV_64F, [[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 0, 0]].flat());

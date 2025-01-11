@@ -55,9 +55,17 @@ app.get("/video", (_, res) => {
   res.render("video");
 });
 
+app.get("/image", (_, res) => {
+  res.render("image");
+});
+
 app.get("/phone/:id", (req, res) => {
   const roomId = req.params.id;
   res.render("phone-video", { roomId }); 
+});
+
+app.get("/phone", (_, res) => {
+  res.render("phone-video");
 });
 
 app.get("/view/:view", (req, res) => {
