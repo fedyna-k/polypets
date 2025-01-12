@@ -74,10 +74,10 @@ socket.on("init", (url) => {
     qrCodeContainer.innerHTML = "";
 
     new QRCode(qrCodeContainer, {
-        text: url
+        text: `${window.location.origin}${url}`
     });
 
-    document.getElementById("code").innerHTML = url;
+    // document.getElementById("code").innerHTML = url;
 });
 
 socket.on("signal", async (data) => {
@@ -105,7 +105,28 @@ pc.addEventListener("connectionstatechange", () => {
     console.log("PeerConnection State (PC):", pc.connectionState);
     if (pc.connectionState === "connected") {
         console.log("WebRTC Connecté");
+        console.log("Showing Game Canvas");
+        ShowVideo();
+
+        if (window.GameId) {
+            socket.to(window.GameId).emit("phone-joined", { gameId: window.GameId, message: "[WebSocket] Téléphone de l'autre joueur connecté.", playerInfo: "L'autre joueur est prêt." });
+        }
     }
+    else if (pc.connectionState === "disconnected") {
+        console.log("WebRTC Déconnecté");
+        console.log("Hiding Game Canvas");
+        HideVideo();
+
+        if (window.GameId) {
+            socket.to(window.GameId).emit("phone-left", { gameId: window.GameId, message: "[WebSocket] Téléphone de l'autre joueur déconnecté.", playerInfo: "L'autre joueur se prépare." });
+        }
+    }
+});
+
+pc.addEventListener("connexion-lost", () => {
+    console.log("WebRTC Déconnecté");
+    console.log("Hiding Game Canvas");
+    HideVideo();
 });
 
 socket.emit("join-pc");
@@ -121,44 +142,31 @@ socket.emit("join-pc");
 //     videoShown = !videoShown;
 // }
 
-// function ShowVideo() {
-//     const gameCanvas = document.getElementById("game-canvas");
-//     const qrCodeDiv = document.getElementById("qr-code-div");
-//     const mainBlurDiv = document.getElementById("main-blur");
+function ShowVideo() {
+    const gameCanvas = document.getElementById("game-canvas");
+    const qrCodeDiv = document.getElementById("qr-code-div");
+    const mainBlurDiv = document.getElementById("main-blur");
 
-//     // Change dynamically the css elements (maybe bring this to a function)
-//     gameCanvas.style.display = "block";
-//     qrCodeDiv.style.display = "none";
-//     mainBlurDiv.classList.add("joined");
-// }
+    // Change dynamically the css elements (maybe bring this to a function)
+    gameCanvas.style.display = "block";
+    qrCodeDiv.style.display = "none";
+    mainBlurDiv.classList.add("joined");
+}
 
-// function HideVideo() {
-//     const gameCanvas = document.getElementById("game-canvas");
-//     const qrCodeDiv = document.getElementById("qr-code-div");
-//     const mainBlurDiv = document.getElementById("main-blur");
+function HideVideo() {
+    const gameCanvas = document.getElementById("game-canvas");
+    const qrCodeDiv = document.getElementById("qr-code-div");
+    const mainBlurDiv = document.getElementById("main-blur");
 
-//     // Change dynamically the css elements (maybe bring this to a function)
-//     gameCanvas.style.display = "none";
-//     qrCodeDiv.style.display = "block";
-//     mainBlurDiv.classList.remove("joined");
-// }
+    // Change dynamically the css elements (maybe bring this to a function)
+    gameCanvas.style.display = "none";
+    qrCodeDiv.style.display = "block";
+    mainBlurDiv.classList.remove("joined");
+}
 
 // ===========================================================================================
 // EVENT LISTENERS
 // ===========================================================================================
-
-/**
- * On WebRTC Connection, updates the frontend page for gaming
- */
-// io.on("connection", (socket) => {
-//     console.log("Showing Game Canvas");
-//     ShowVideo();
-
-//     socket.on("disconnect", () => {
-//         console.log("Hiding Game Canvas");
-//         HideVideo();
-//     });
-// });
 
 /**
  * When called, gets the current frame and analyses it
