@@ -107,6 +107,8 @@ pc.addEventListener("connectionstatechange", () => {
         console.log("WebRTC Connecté");
         console.log("Showing Game Canvas");
         ShowVideo();
+
+        socket.emit()
     }
     else if (pc.connectionState === "disconnected") {
         console.log("WebRTC Déconnecté");

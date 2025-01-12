@@ -103,16 +103,16 @@ const io = new Server(server);
 let roomCounter = 0;
 
 io.on("connection", (socket: Socket) => {
-  console.log("Nouvelle connexion WebSocket");
+  console.log("[WebSocket] Nouvelle connexion");
 
   // When a player creates a game
   socket.on("create-game", (gameId: string) => {
     // Create a new room with the gameId
     socket.join(gameId);
-    console.log(`Partie ${gameId} créée et joueur ajouté à la room`);
+    console.log(`[WebSocket] Partie ${gameId} créée et joueur ajouté à la room`);
 
     // Send a response to the player
-    socket.emit("game-created", { gameId, message: `Partie ${gameId} créée avec succès.` });
+    socket.emit("game-created", { gameId, message: `[WebSocket] Partie ${gameId} créée avec succès.` });
   });
 
   // When a player joins an existing game
@@ -121,23 +121,23 @@ io.on("connection", (socket: Socket) => {
 
     if (room) {
       socket.join(gameId);
-      console.log(`Joueur ajouté à la room de la partie ${gameId}`);
+      console.log(`[WebSocket] Joueur ajouté à la room de la partie ${gameId}`);
 
       // Notify other players that this player joined the game
-      io.to(gameId).emit("player-joined", { gameId, message: "Un nouveau joueur a rejoint la partie." });
+      io.to(gameId).emit("player-joined", { gameId, message: "[WebSocket] Un nouveau joueur a rejoint la partie.", playerInfo: "L'autre joueur se prépare." });
 
       // Send a response to the concerned player
-      socket.emit("game-joined", { gameId, message: "Vous avez rejoint la partie." });
+      socket.emit("game-joined", { gameId, message: "[WebSocket] Vous avez rejoint la partie." });
     } else {
-      console.log(`La partie ${gameId} n'existe pas`);
-      socket.emit("error", "La partie spécifiée n'existe pas.");
+      console.log(`[WebSocket] La partie ${gameId} n'existe pas`);
+      socket.emit("error", "[WebSocket]  La partie spécifiée n'existe pas.");
     }
   });
 
   // When the battle result is ready, send it to all players
   socket.on("send-battle-result", (gameId: string, battleResult) => {
     io.to(gameId).emit("battle-result", battleResult);
-    console.log(`Résultat du combat envoyé à la room ${gameId}:`, battleResult);
+    console.log(`[WebSocket] Résultat du combat envoyé à la room ${gameId}:`, battleResult);
   });
 
   // When a pc joins the video room
@@ -146,7 +146,7 @@ io.on("connection", (socket: Socket) => {
     roomCounter += 1;
 
     socket.join(roomId);
-    console.log(`PC ajouté à la room: ${roomId}`);
+    console.log(`[WebSocket] PC ajouté à la room: ${roomId}`);
 
     socket.emit("init", `/phone/${roomId}`);
 
@@ -157,12 +157,12 @@ io.on("connection", (socket: Socket) => {
     const room = io.sockets.adapter.rooms.get(roomId); 
     if (room) {
       socket.join(roomId); 
-      console.log(`Téléphone rejoint la room: ${roomId}`);
+      console.log(`[WebSocket] Téléphone rejoint la room: ${roomId}`);
 
       io.to(roomId).emit("signal", "phone-connected");
     } else {
-      console.log(`Room non trouvée: ${roomId}`);
-      socket.emit("error", "Room non trouvée");
+      console.log(`[WebSocket] Room non trouvée: ${roomId}`);
+      socket.emit("error", "[WebSocket] Room non trouvée");
     }
   });
 
@@ -175,7 +175,7 @@ io.on("connection", (socket: Socket) => {
   });
 
   socket.on("disconnect", () => {
-      console.log("Déconnexion WebSocket");
+      console.log("[WebSocket] Déconnexion");
       io.emit("connexion-lost");
   });
 });

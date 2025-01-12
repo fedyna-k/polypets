@@ -18,23 +18,59 @@
   <div id="loading-bar"></div>
 </div>
 <div id="scene-container" class="container">
-  <div id="main-blur" class="blur">
+  <div id="join-blur" class="blur">
     <img id="logo" src="/static/resources/images/logo.png">
 
-    <form>
+    <form id="join-game-form">
       <div id="code">Entrez le code de la partie que vous souhaitez rejoindre</div>
 
-      <input type="text" placeholder="AAAAAAAA" required>
+      <input type="text" id="game-code" placeholder="AAAAAAAA" required>
       <input type="submit" id="submit" class="menu-button" value="Rejoindre">
 
       <!-- Message d'erreur -->
-      <div class="error_message">Code non valide</div>
+      <div class="error_message" style="display:none;">Code non valide</div>
     </form>
 
     <button class="menu-button" onclick="render('homepage')">Retour au menu</button>
   </div>
+
+  <div id="main-blur" class="blur" style="display: none;">
+    <img id="logo" src="../static/resources/images/logo.png">
+
+    <div id="qr-code-div" class="qr-code">
+      <div>Connectez votre smartphone</div>
+      <div id="qrcode" style="width: 256px;height: 256px;"></div>
+    </div>
+
+    <div id="game-canvas" style="display: none;">
+      <video id="remoteVideo" autoplay playsinline style="display: none;"></video>
+      <div id="game-scene-container">
+        <canvas id="frameCanvas"></canvas>
+      </div>
+    </div>
+
+    <%- include("./partials/player-load.ejs") %>
+
+    <!--<button class="menu-button" onclick="render('homepage')">Retour au menu</button>-->
+    <button class="menu-button" onclick="ToggleVideo()">Magical Animation</button>
+  </div>
 </div>
 <%- include("./partials/three-import.ejs") %>
+
+<!-- Import Scripts -->
+<script src="/static/script/libs/qrcode.min.js"></script>>
+<!-- Import openCV -->
+<script src="../static/script/opencv/ImageProcessor.js"></script>
+<!-- Load openCV -->
+<script async src="../static/resources/opencv/opencv.js" onload="onCvReady()"></script>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<!-- Connection to phone + image analysis script -->
+<script src="../static/script/video/video.js"></script>
+
+<!-- Import AR Three JS Overlay -->
+<script type="module" src="../static/script/scenes/video-ar.js"></script>
 
 <script src="../static/script/game/join-game.js"></script>
 <script src="../static/script/game/battle.js"></script>
