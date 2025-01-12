@@ -154,7 +154,7 @@ io.on("connection", (socket: Socket) => {
 
   // When a phone joins the video room
   socket.on("join-phone", (roomId: string) => {
-    const room = io.sockets.adapter.rooms.get(roomId); 
+    const room = io.sockets.adapter.rooms.get(roomId);
     if (room) {
       socket.join(roomId); 
       console.log(`[WebSocket] Téléphone rejoint la room: ${roomId}`);
