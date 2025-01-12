@@ -13,4 +13,8 @@ BattleRouter.get("/:gameId", (req, res) => {
     res.send(Battle.find(req.params.gameId));
 });
 
+BattleRouter.get("/simulate/:gameId", (req, res) => {
+    res.send(Battle.createBattle(req.params.gameId));
+});
+
 export default BattleRouter;

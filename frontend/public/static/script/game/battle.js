@@ -1,6 +1,18 @@
 let battle_socket = io();
 
-battle_socket.on("shop-phase-finished", )
+// Front functions for shop
+
+// Web socket events
+
+battle_socket.on("start-shop-phase", () => {
+    console.log("Starting shop phase.");
+});
+
+battle_socket.on("end-shop-phase", () => {
+    console.log("Shop phase is finished.");
+
+    // Send the data of the team
+});
 
 // Receive the battle result
 battle_socket.on("battle-result", (battleResult) => {

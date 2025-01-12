@@ -1,6 +1,6 @@
 import {randomBytes} from "crypto";
 import Cache from "./cache.js";
-import {BattlePhase} from "../models/battle-phase.js";
+import {BattlePhase, BattleTurnLog} from "../models/battle-phase.js";
 import {Pet} from "../models/pet.js";
 import {FoodIDs, PetIDs} from "../models/enums.js";
 import {Food} from "../models/food.js";
@@ -27,10 +27,11 @@ interface BattleSim {
     id: string,
     battleState: string,
     winner: string,
-    turnCount: string
+    turnCount: string,
+    battleLogs: BattleTurnLog[]
 }
 
-function storeBattleRequest(jsonData: BattleRequest) {
+function storeBattleRequest(jsonData: BattleRequest, internal: boolean = false) {
     const { gameId, playerId, team, food } = jsonData;
 
     if (team.length !== 5 || food.length !== 5) {
@@ -70,7 +71,7 @@ function storeBattleRequest(jsonData: BattleRequest) {
     console.log(`Battle state updated: ${JSON.stringify(battleState)}`);
 
     if (battleState.isReady) {
-        io.to(gameId).emit("send-battle-result", simulateBattle(gameId));
+        if (!internal) io.to(gameId).emit("send-battle-result", simulateBattle(gameId));
         return { state: "success", message: "Waiting for battle result." };
     }
 
@@ -134,7 +135,8 @@ function simulateBattle(gameId: string): BattleSim {
         id: battlePhase.id,
         battleState: battleSim.result.toString(),
         winner: battleSim.winner.toString(),
-        turnCount: battlePhase.turn_count.toString()
+        turnCount: battlePhase.turn_count.toString(),
+        battleLogs: battlePhase.history
     };
 
     Cache.add({
@@ -143,6 +145,27 @@ function simulateBattle(gameId: string): BattleSim {
     });
 
     return cacheValue;
+}
+
+function createBattle(gameId: string): BattleSim {
+    const request1: BattleRequest = {
+        gameId,
+        playerId: "player0",
+        team: [PetIDs.Pig, PetIDs.Goat, PetIDs.Rat, PetIDs.Cow, PetIDs.Chicken],
+        food: [FoodIDs.Banana, FoodIDs.None, FoodIDs.Banana, FoodIDs.None, FoodIDs.None]
+    };
+
+    const request2: BattleRequest = {
+        gameId,
+        playerId: "player1",
+        team: [PetIDs.Rat, PetIDs.Cow, PetIDs.Chicken, PetIDs.Pig, PetIDs.Cow],
+        food: [FoodIDs.Banana, FoodIDs.None, FoodIDs.Banana, FoodIDs.None, FoodIDs.None]
+    };
+
+    storeBattleRequest(request1, true);
+    storeBattleRequest(request2, true);
+
+    return simulateBattle(gameId);
 }
 
 
@@ -157,6 +180,6 @@ function find(gameId: string) {
 
 export default {
     storeBattleRequest,
-    simulateBattle,
+    createBattle,
     find
 };

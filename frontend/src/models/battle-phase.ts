@@ -1,4 +1,3 @@
-import {BattleTurnLog} from "./battle-turn-log.js";
 import {GamePhase, PhaseState} from "./game-phase.js";
 import {Pet} from "./pet.js";
 import {ShopPhase} from "./shop-phase.js";
@@ -6,6 +5,17 @@ import {ShopPhase} from "./shop-phase.js";
 interface BattleResult {
     result: BattleState,
     winner: Winner
+}
+
+export interface BattleTurnLog {
+    pet1: {
+        damage: number,
+        faints: boolean
+    }
+    pet2: {
+        damage: number,
+        faints: boolean
+    }
 }
 
 enum BattleState {
@@ -87,19 +97,36 @@ export class BattlePhase implements GamePhase {
      * Calculates one turn of the battle
      */
     resolveTurn(): BattleTurnLog {
-        const log : BattleTurnLog = new BattleTurnLog();
-        this.damagePhase();
-        this.updateDeadPets();
+        const log = {
+            pet1: {
+                damage: 0,
+                faints: false
+            },
+            pet2: {
+                damage: 0,
+                faints: false
+            }
+        };
+
+        this.damagePhase(log);
+        this.updateDeadPets(log);
         return log;
     }
 
-    damagePhase(): void {
+    damagePhase(log: BattleTurnLog): void {
+        const damage0 = this.calculateDamage(this.team0[this.team0_index]!);
+        const damage1 = this.calculateDamage(this.team1[this.team1_index]!);
+
+        // Log the damages
+        log.pet1.damage = damage0;
+        log.pet2.damage = damage1;
+
         // Team0 takes damage
         console.log(`Applying damages for player1's ${this.team0[this.team0_index]!.species}`);
-        this.team0[this.team0_index]!.totalLife -= this.calculateDamage(this.team1[this.team1_index]!);
+        this.team0[this.team0_index]!.totalLife -= damage1;
         // Team1 takes damage
         console.log(`Applying damages for player2's ${this.team1[this.team1_index]!.species}`);
-        this.team1[this.team1_index]!.totalLife -= this.calculateDamage(this.team0[this.team0_index]!);
+        this.team1[this.team1_index]!.totalLife -= damage0;
     }
 
     calculateDamage(attacker : Pet) : number {
@@ -107,21 +134,31 @@ export class BattlePhase implements GamePhase {
         return attacker.totalDamage;
     }
 
-    updateDeadPets() : void {
+    updateDeadPets(log: BattleTurnLog) : void {
         if (this.team0[this.team0_index]!.isDead) {
 
             console.log(`${this.team0[this.team0_index]!.species} fainted.`);
+
+            log.pet1.faints = true;
 
             // Increments the index for the next pet
             if (this.team0_index < this.team0.length)
                 this.team0_index++;
         }
+        else {
+            log.pet1.faints = false;
+        }
         if (this.team1[this.team1_index]!.isDead) {
             console.log(`${this.team1[this.team1_index]!.species} fainted.`);
+
+            log.pet2.faints = true;
 
             // Increments the index for the next pet
             if (this.team1_index < this.team1.length)
                 this.team1_index++;
+        }
+        else {
+            log.pet2.faints = false;
         }
     }
 
