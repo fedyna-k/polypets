@@ -3,6 +3,11 @@ import {GamePhase, PhaseState} from "./game-phase.js";
 import {Pet} from "./pet.js";
 import {ShopPhase} from "./shop-phase.js";
 
+interface BattleResult {
+    result: BattleState,
+    winner: Winner
+}
+
 enum BattleState {
     Win,
     Draw
@@ -124,7 +129,7 @@ export class BattlePhase implements GamePhase {
 
     }
 
-    simulate() {
+    simulate(): BattleResult {
         do {
             this.history.push(this.resolveTurn());
             this.turn_count++;

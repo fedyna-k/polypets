@@ -4,8 +4,9 @@ import Battle from "../handler/battle.js";
 const BattleRouter = express.Router();
 BattleRouter.use(express.json());
 
-BattleRouter.get("/create/:gameId", (req, res) => {
-    res.send(Battle.create(req.params.gameId));
+BattleRouter.get("/request", (req, res) => {
+    const jsonData = req.body;
+    res.send(Battle.storeBattleRequest(jsonData));
 });
 
 BattleRouter.get("/:gameId", (req, res) => {

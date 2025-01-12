@@ -17,6 +17,16 @@ function create() {
   };
 }
 
+function all() {
+  const params = {
+    category: "game",
+    criteria: {}
+  };
+
+  return Cache.find(params);
+}
+
 export default {
-  create
+  create,
+  all
 };

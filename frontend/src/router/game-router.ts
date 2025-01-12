@@ -8,4 +8,8 @@ GameRouter.get("/", (_, res) => {
   res.send(Game.create());
 });
 
+GameRouter.get("/all", (_, res) => {
+  res.send(Game.all());
+});
+
 export default GameRouter;
