@@ -155,7 +155,7 @@ class ImageProcessor {
         }
 
         if (detected_corners.some(corner => typeof corner == "number")) {
-            //throw new Error("Corners not detected properly");
+            throw new Error("Corners not detected properly");
         }
 
         this.detected_corners = detected_corners;
@@ -218,7 +218,7 @@ class ImageProcessor {
     */
     getRotationAndTranslationMatrices(corners){
         const corners_mat = this.cv.matFromArray(4, 2, this.cv.CV_64F, corners.flat());
-        const real_corners = this.cv.matFromArray(4, 3, this.cv.CV_64F, [[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 0, 0]].flat());
+        const real_corners = this.cv.matFromArray(4, 3, this.cv.CV_64F, [[-0.5, 0, -0.5], [0.5, 0, -0.5], [0.5, 0, 0.5], [-0.5, 0, 0.5]].flat());
 
         let rvec = new this.cv.Mat();
         let tvec = new this.cv.Mat();

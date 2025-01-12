@@ -45,7 +45,7 @@ html, body {
   backdrop-filter: blur(var(--island-blur-radius));
   padding: 4em 3em;
   border-radius: 0.5em;
-  width: auto;
+  width: 40dvw;
   transition: width 200ms ease-in-out;
 }
 

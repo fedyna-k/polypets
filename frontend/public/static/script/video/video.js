@@ -74,10 +74,10 @@ socket.on("init", (url) => {
     qrCodeContainer.innerHTML = "";
 
     new QRCode(qrCodeContainer, {
-        text: url
+        text: `${window.location.origin}${url}`
     });
 
-    document.getElementById("code").innerHTML = url;
+    // document.getElementById("code").innerHTML = url;
 });
 
 socket.on("signal", async (data) => {
@@ -105,21 +105,42 @@ pc.addEventListener("connectionstatechange", () => {
     console.log("PeerConnection State (PC):", pc.connectionState);
     if (pc.connectionState === "connected") {
         console.log("WebRTC Connecté");
+        console.log("Showing Game Canvas");
+        ShowVideo();
+
+        if (window.GameId) {
+            socket.to(window.GameId).emit("phone-joined", { gameId: window.GameId, message: "[WebSocket] Téléphone de l'autre joueur connecté.", playerInfo: "L'autre joueur est prêt." });
+        }
+    }
+    else if (pc.connectionState === "disconnected") {
+        console.log("WebRTC Déconnecté");
+        console.log("Hiding Game Canvas");
+        HideVideo();
+
+        if (window.GameId) {
+            socket.to(window.GameId).emit("phone-left", { gameId: window.GameId, message: "[WebSocket] Téléphone de l'autre joueur déconnecté.", playerInfo: "L'autre joueur se prépare." });
+        }
     }
 });
 
-socket.emit("join-pc");
-let videoShown = false;
+pc.addEventListener("connexion-lost", () => {
+    console.log("WebRTC Déconnecté");
+    console.log("Hiding Game Canvas");
+    HideVideo();
+});
 
-function ToggleVideo() {
-    if (videoShown) {
-        HideVideo();
-    }
-    else {
-        ShowVideo();
-    }
-    videoShown = !videoShown;
-}
+socket.emit("join-pc");
+// let videoShown = false;
+
+// function ToggleVideo() {
+//     if (videoShown) {
+//         HideVideo();
+//     }
+//     else {
+//         ShowVideo();
+//     }
+//     videoShown = !videoShown;
+// }
 
 function ShowVideo() {
     const gameCanvas = document.getElementById("game-canvas");
@@ -148,19 +169,6 @@ function HideVideo() {
 // ===========================================================================================
 
 /**
- * On WebRTC Connection, updates the frontend page for gaming
- */
-io.on("connection", (socket) => {
-    console.log("Showing Game Canvas");
-    ShowVideo();
-
-    socket.on("disconnect", () => {
-        console.log("Hiding Game Canvas");
-        HideVideo();
-    });
-});
-
-/**
  * When called, gets the current frame and analyses it
  */
 function captureFrame() {
@@ -187,7 +195,7 @@ function captureFrame() {
             
             const projection_matrices = imgProc.getRotationAndTranslationMatrices(detected_corners);
 
-            console.log(imgProc.detectCards());
+            // console.log(imgProc.detectCards());
             
             window.sharedData = {
                 focal_length,
