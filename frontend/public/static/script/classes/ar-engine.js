@@ -84,6 +84,8 @@ export class ArEngine {
                         directionalLight.castShadow = false;
 
                         this.scene.add(directionalLight);
+
+                        this.camera.translateY(100);
                     },
                     (xhr) => {
                         console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
@@ -209,7 +211,7 @@ export class ArEngine {
         const transform_matrix = new THREE.Matrix4().set(
             rotation[0], rotation[3], rotation[6], translation[0],
             rotation[1], rotation[4], rotation[7], translation[1],
-            rotation[2], rotation[5], rotation[8], translation[2],
+            rotation[2], rotation[5], rotation[8], -translation[2],
             0, 0, 0, 1
         );
         
