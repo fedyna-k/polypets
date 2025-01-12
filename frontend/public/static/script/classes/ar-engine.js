@@ -74,9 +74,32 @@ export class ArEngine {
 
                         this.scene.add(object);
 
+                        // Axis drawn
                         const axesHelper = new THREE.AxesHelper( 5 );
                         this.scene.add( axesHelper );
 
+                        // Lines to represent sheet of paper
+                        const material = new THREE.LineBasicMaterial( { color: 0x00ff00 } );
+
+                        const points = [];
+                        // points.push(new THREE.Vector3(-0.3, 0, -0.3));
+                        // points.push(new THREE.Vector3(0.3, 0, -0.3));
+                        // points.push(new THREE.Vector3(0.3, 0, 0.3));
+                        // points.push(new THREE.Vector3(-0.3, 0, 0.3));
+                        // points.push(new THREE.Vector3(-0.3, 0, -0.3));
+
+                        points.push(new THREE.Vector3(-0.1485, 0, -0.105));
+                        points.push(new THREE.Vector3(0.1485, 0, -0.105));
+                        points.push(new THREE.Vector3(0.1485, 0, 0.105));
+                        points.push(new THREE.Vector3(-0.1485, 0, 0.105));
+                        points.push(new THREE.Vector3(-0.1485, 0, -0.105));
+
+                        const geometry = new THREE.BufferGeometry().setFromPoints( points );
+
+                        const line = new THREE.Line( geometry, material );
+                        this.scene.add( line );
+
+                        // Light
                         const directionalLight = new THREE.DirectionalLight( 0xffffff, 11 );
 
                         directionalLight.target = object;
@@ -169,12 +192,15 @@ export class ArEngine {
         // console.log("[ArEngine] Updating Camera Transform");
 
         // Conversion de la rotation et translation OpenCV vers une matrice 4x4 pour THREE.js
-        // const rotation = window.sharedData.rotation;
-        // const translation = window.sharedData.translation;
-        // const K = window.sharedData.K;
+        const rotation = window.sharedData.rotation;
+        const translation = window.sharedData.translation;
+        const K = window.sharedData.K;
+
+        const camera_mat = new THREE.Matrix3().set(K);
 
         this.camera.fov = window.sharedData.FOV;
         this.camera.aspect = window.sharedData.video_width/window.sharedData.video_height;
+        this.camera.matrix.copy(camera_mat);
         this.camera.updateProjectionMatrix();
 
         // const matrix = [rotation[0], rotation[1], rotation[2], translation[0],
@@ -197,30 +223,34 @@ export class ArEngine {
         // projection.push(0);
         // projection.push(1);
 
-        // const transform_matrix = new THREE.Matrix4().fromArray(projection);
+        // const projection_transpose = [
+        //     projection[0], projection[4], projection[8], projection[12],
+        //     projection[1], projection[5], projection[9], projection[13],
+        //     projection[2], projection[6], projection[10], projection[14],
+        //     projection[3], projection[7], projection[11], projection[15],
+        // ];
 
-        // const farm = this.scene.getObjectByName("farm");
-        // farm.applyMatrix4(transform_matrix);
+        // let transform_matrix = new THREE.Matrix4().fromArray(projection_transpose);
 
+        // console.log(transform_matrix);
 
-        const rotation = window.sharedData.rotation;
-        const translation = window.sharedData.translation;
 
         const transform_matrix = new THREE.Matrix4().set(
-            rotation[0], rotation[3], rotation[6], translation[0],
-            rotation[1], rotation[4], rotation[7], translation[1],
-            rotation[2], rotation[5], rotation[8], translation[2],
+            rotation[0], rotation[3], -rotation[6], translation[0],
+            rotation[1], -rotation[4], rotation[7], translation[1],
+            -rotation[2], -rotation[5], -rotation[8], -translation[2],
             0, 0, 0, 1
         );
-        
-        // Ajustement des coordonnées d'OpenCV à THREE.js
-        
-        // Application la transformation sur la caméra
-        // this.camera.matrix.copy(transform_matrix);
-        // this.camera.matrixAutoUpdate = false;
-        // this.camera.matrixWorldNeedsUpdate = true;
 
-        // console.log("Final Transform Matrix:", transform_matrix.elements);
+        // const transform_matrix = new THREE.Matrix4().set(
+        //     rotation[0], rotation[1], rotation[2], translation[0],
+        //     rotation[3], rotation[4], rotation[5], translation[1],
+        //     rotation[6], rotation[7], rotation[8], translation[2],
+        //     0, 0, 0, 1
+        // );
+
+        // console.log(transform_matrix);
+
 
         this.scene.traverse((model) => {
             if (model instanceof THREE.Mesh || model instanceof THREE.Line) {
@@ -234,7 +264,7 @@ export class ArEngine {
         const center_pos = new THREE.Vector3(0, 0, 0);
         center_pos.applyMatrix4(transform_matrix);
         this.camera.lookAt(center_pos);
-        console.log(center_pos);
+        // console.log(center_pos);
     }
 
     SetHomography(h) {
