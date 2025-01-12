@@ -1,6 +1,9 @@
+let battle_socket = io();
+
+battle_socket.on("shop-phase-finished", )
+
 // Receive the battle result
-// eslint-disable-next-line no-undef
-socket.on("battle-result", (battleResult) => {
+battle_socket.on("battle-result", (battleResult) => {
     console.log("Résultat du combat reçu:", battleResult);
 
     const { winner, turnCount, result } = battleResult;
