@@ -223,7 +223,7 @@ export class ArEngine {
         // console.log("Final Transform Matrix:", transform_matrix.elements);
 
         this.scene.traverse((model) => {
-            if (model instanceof THREE.Object3D) {
+            if (model instanceof THREE.Mesh || model instanceof THREE.Line) {
                 model.position.set( 0, 0, 0 );
                 model.rotation.set( 0, 0, 0 );
                 model.updateMatrix();
