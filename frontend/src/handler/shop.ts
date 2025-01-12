@@ -2,6 +2,7 @@ import {randomBytes} from "crypto";
 import Cache from "./cache.js";
 import {FoodIDs, PetIDs} from "../models/enums.js";
 import {ShopPhase} from "../models/shop-phase.js";
+import {io} from "../app.js";
 
 function create(gameId: string, playerId: string) {
     const bytes = randomBytes(6);
@@ -39,7 +40,12 @@ function create(gameId: string, playerId: string) {
         value: cacheValue
     });
 
-    // Delete data from cache after the maximum time
+    // Force the shop phase to end for all players when time is reached
+    setTimeout(() => {
+        io.to(gameId).emit("end-shop-phase");
+    }, time);
+
+    // Delete data from cache after a maximum amount of time
     setTimeout(() => {
         const params = {
             category: "shop",
@@ -47,7 +53,7 @@ function create(gameId: string, playerId: string) {
         };
 
         Cache.findRemove(params);
-    }, time);
+    }, 300000);
 
     return cacheValue;
 }

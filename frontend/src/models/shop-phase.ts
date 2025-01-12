@@ -64,9 +64,9 @@ export class ShopPhase implements GamePhase {
      *  Adds a pet to the pet table and retrieve one from the available pets in the shop
      * @param pet
      */
-    buyPet(pet : PetIDs) : boolean {
+    buyPet(pet : PetIDs, index : number) : boolean {
         if (this.available_pets[pet] != null && this.available_pets[pet] > 0) {
-            this.pets.push(new Pet(pet));
+            this.pets[index] = new Pet(pet);
             this.available_pets[pet]--;
             return true;
         }
@@ -92,9 +92,9 @@ export class ShopPhase implements GamePhase {
      *  Adds a food ID to the food table and retrieve one from the available food in the shop
      * @param food
      */
-    buyFood(food : FoodIDs) : boolean {
+    buyFood(food : FoodIDs, index : number) : boolean {
         if (this.available_food[food] != null && this.available_food[food] > 0) {
-            this.food.push(food);
+            this.food[index] = food;
             this.available_food[food]--;
             return true;
         }

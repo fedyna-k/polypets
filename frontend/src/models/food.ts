@@ -17,4 +17,8 @@ export class Food {
     get damage() : number {
         return this.damage_buff;
     }
+
+    isNullOrNone(): boolean {
+        return this.food_type == FoodIDs.None;
+    }
 }
