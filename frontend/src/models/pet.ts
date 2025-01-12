@@ -1,5 +1,5 @@
-import { Food } from "./food.js";
-import { PetIDs } from "./enums.js";
+import {Food} from "./food.js";
+import {FoodIDs, PetIDs} from "./enums.js";
 import {PetData} from "./pet-data.js";
 import {GameData} from "./game-data.js";
 
@@ -55,6 +55,8 @@ export class Pet {
    * @returns true if it has been correctly added
    */
   addFood(food: Food): boolean {
+    if (food.food_type == FoodIDs.None) return false;
+
     if (this.food.length >= 2) {
       console.log(`Cannot add food: food limit reached.`);
       return false; // Limit set to 2 (might be changed later)
@@ -116,5 +118,9 @@ export class Pet {
     if (damage > 0) {
       this.totalLife = this.life - damage;
     }
+  }
+
+  isNullOrNone(): boolean {
+    return this.species == PetIDs.None;
   }
 }

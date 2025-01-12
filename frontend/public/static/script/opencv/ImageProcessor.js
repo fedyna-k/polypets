@@ -95,10 +95,13 @@ class ImageProcessor {
         const mat = this.cv.matFromImageData(image);
 
         try {
-            return this.homography(mat);
+            let homography = this.homography(mat);
+            console.log(homography);
+            return homography;
         }
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
         catch(e) {
-            console.error(e);
+            // console.error(e);
         }
     }
 
@@ -152,7 +155,7 @@ class ImageProcessor {
         }
 
         if (detected_corners.some(corner => typeof corner == "number")) {
-            //throw new Error("Corners not detected properly");
+            throw new Error("Corners not detected properly");
         }
 
         this.detected_corners = detected_corners;
@@ -182,11 +185,11 @@ class ImageProcessor {
      */
     setIntrinsicCameraMatrix(focal_length_35mm, width, height) {
         // Get FOV and convert to degrees
-        const FOV = 2 * Math.atan(36/(2 * focal_length_35mm)) * 180 / Math.PI;
+        this.FOV = 2 * Math.atan(36/(2 * focal_length_35mm)) * 180 / Math.PI;
 
         // Get fx and fy
-        const fx = Math.floor(width / (2 * Math.tan(FOV)));
-        const fy = Math.floor(height / (2 * Math.tan(FOV)));
+        const fx = Math.floor(width / (2 * Math.tan(this.FOV)));
+        const fy = Math.floor(height / (2 * Math.tan(this.FOV)));
 
         // Get instrinsic camera matrix
         this.K = this.cv.matFromArray(3, 3, this.cv.CV_64F, [[fx, 0, Math.floor(width / 2)], [0, fy, Math.floor(height / 2)], [0, 0, 1]].flat());
@@ -199,16 +202,23 @@ class ImageProcessor {
         return this.K != undefined;
     }
 
+    getInstrinsicCamera() {
+        return this.K.data64F;
+    }
+
+    getFOV() {
+        return this.FOV;
+    }
 
     /**
      * Compute and returns the rotation matrix and translation vector to get the camera pose in our scene from the picture
      * of the board.
      * @param {number[][]} corners Array with the position of the corners of the board (aruco markers 0 to 3) in pixels
      * @returns Array with in first position the rotation matrix and in the second position the translation vector : [rotation_array, translation_array]
-     */
+    */
     getRotationAndTranslationMatrices(corners){
         const corners_mat = this.cv.matFromArray(4, 2, this.cv.CV_64F, corners.flat());
-        const real_corners = this.cv.matFromArray(4, 3, this.cv.CV_64F, [[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 0, 0]].flat());
+        const real_corners = this.cv.matFromArray(4, 3, this.cv.CV_64F, [[-0.5, 0, -0.5], [0.5, 0, -0.5], [0.5, 0, 0.5], [-0.5, 0, 0.5]].flat());
 
         let rvec = new this.cv.Mat();
         let tvec = new this.cv.Mat();

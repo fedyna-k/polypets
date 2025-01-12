@@ -1,0 +1,11 @@
+#game-scene-container {
+    position: relative;
+    display: grid;
+    place-items: center;
+    place-content: center;
+}
+
+#game-scene-container > canvas:not(#frameCanvas) {
+    position: absolute;
+    z-index: 99999;
+}

@@ -19,7 +19,7 @@ async function render(link) {
   style.href = `/static/style/${link}.css`;
   parent.appendChild(style);
 
-  parent.innerHTML += html;  
+  parent.innerHTML += html;
 }
 
 // render(getCookies().navigation ?? "homepage");
