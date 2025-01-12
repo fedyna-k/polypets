@@ -1,5 +1,3 @@
-let GameId = "undefined";
-
 let join_socket = io();
 
 document.getElementById("join-game-form").addEventListener("submit", function(event) {
@@ -27,7 +25,7 @@ document.getElementById("join-game-form").addEventListener("submit", function(ev
         .then(data => {
             console.log(`Partie ${gameCode} rejointe avec succès`, data);
             // Update local gameId
-            GameId = gameCode;
+            window.GameId = gameCode;
 
             // Gérer les événements de WebSocket
             join_socket.on("player-joined", (data) => {
@@ -35,6 +33,23 @@ document.getElementById("join-game-form").addEventListener("submit", function(ev
                 document.getElementById("second-player-info").innerHTML = data.playerInfo;
                 document.getElementById("playerLoader").style.display = "none";
                 document.getElementById("playerIcon").style.display = "block";
+                document.getElementById("playerReady").style.display = "none";
+            });
+
+            join_socket.on("phone-joined", (data) => {
+                console.log(data.message);  // "Téléphone de l'autre joueur connecté."
+                document.getElementById("second-player-info").innerHTML = data.playerInfo;
+                document.getElementById("playerLoader").style.display = "none";
+                document.getElementById("playerIcon").style.display = "none";
+                document.getElementById("playerReady").style.display = "block";
+            });
+
+            join_socket.on("phone-left", (data) => {
+                console.log(data.message);  // "Téléphone de l'autre joueur déconnecté."
+                document.getElementById("second-player-info").innerHTML = data.playerInfo;
+                document.getElementById("playerLoader").style.display = "none";
+                document.getElementById("playerIcon").style.display = "block";
+                document.getElementById("playerReady").style.display = "none";
             });
 
             join_socket.on("game-joined", (data) => {

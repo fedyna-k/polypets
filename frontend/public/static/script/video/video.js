@@ -108,12 +108,18 @@ pc.addEventListener("connectionstatechange", () => {
         console.log("Showing Game Canvas");
         ShowVideo();
 
-        socket.emit()
+        if (window.GameId) {
+            socket.to(window.GameId).emit("phone-joined", { gameId: window.GameId, message: "[WebSocket] Téléphone de l'autre joueur connecté.", playerInfo: "L'autre joueur est prêt." });
+        }
     }
     else if (pc.connectionState === "disconnected") {
         console.log("WebRTC Déconnecté");
         console.log("Hiding Game Canvas");
         HideVideo();
+
+        if (window.GameId) {
+            socket.to(window.GameId).emit("phone-left", { gameId: window.GameId, message: "[WebSocket] Téléphone de l'autre joueur déconnecté.", playerInfo: "L'autre joueur se prépare." });
+        }
     }
 });
 

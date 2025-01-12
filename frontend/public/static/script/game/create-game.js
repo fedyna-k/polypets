@@ -1,4 +1,3 @@
-let GameId = "undefined";
 let create_socket = io();
 
 // HTTP Request to create a unique game ID
@@ -12,7 +11,7 @@ fetch("/game/create")
         create_socket.on("game-created", (response) => {
             console.log(response.message); // "Partie créée avec succès."
             // Update local gameId
-            GameId = generatedGameId;
+            window.GameId = generatedGameId;
         });
 
         // Gérer les événements de WebSocket
@@ -21,6 +20,22 @@ fetch("/game/create")
             document.getElementById("second-player-info").innerHTML = data.playerInfo;
             document.getElementById("playerLoader").style.display = "none";
             document.getElementById("playerIcon").style.display = "block";
+        });
+
+        create_socket.on("phone-joined", (data) => {
+            console.log(data.message);  // "Téléphone de l'autre joueur connecté."
+            document.getElementById("second-player-info").innerHTML = data.playerInfo;
+            document.getElementById("playerLoader").style.display = "none";
+            document.getElementById("playerIcon").style.display = "none";
+            document.getElementById("playerReady").style.display = "block";
+        });
+
+        create_socket.on("phone-left", (data) => {
+            console.log(data.message);  // "Téléphone de l'autre joueur déconnecté."
+            document.getElementById("second-player-info").innerHTML = data.playerInfo;
+            document.getElementById("playerLoader").style.display = "none";
+            document.getElementById("playerIcon").style.display = "block";
+            document.getElementById("playerReady").style.display = "none";
         });
 
         // Create a game with the id received
