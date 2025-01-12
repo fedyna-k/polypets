@@ -2,16 +2,8 @@
   width: 30em;
 }
 
-button.menu-button {
-  width: 50%;
-}
-
 @media screen and (max-width: 600px) {
   #logo {
     width: 15em;
-  }
-
-  button.menu-button {
-    width: 100%;
   }
 }
