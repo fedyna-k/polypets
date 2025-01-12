@@ -130,17 +130,17 @@ pc.addEventListener("connexion-lost", () => {
 });
 
 socket.emit("join-pc");
-let videoShown = false;
+// let videoShown = false;
 
-function ToggleVideo() {
-    if (videoShown) {
-        HideVideo();
-    }
-    else {
-        ShowVideo();
-    }
-    videoShown = !videoShown;
-}
+// function ToggleVideo() {
+//     if (videoShown) {
+//         HideVideo();
+//     }
+//     else {
+//         ShowVideo();
+//     }
+//     videoShown = !videoShown;
+// }
 
 function ShowVideo() {
     const gameCanvas = document.getElementById("game-canvas");
@@ -195,7 +195,7 @@ function captureFrame() {
             
             const projection_matrices = imgProc.getRotationAndTranslationMatrices(detected_corners);
 
-            console.log(imgProc.detectCards());
+            // console.log(imgProc.detectCards());
             
             window.sharedData = {
                 focal_length,
