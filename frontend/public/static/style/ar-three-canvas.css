@@ -7,4 +7,5 @@
 
 #game-scene-container > canvas:not(#frameCanvas) {
     position: absolute;
+    z-index: 99999;
 }
